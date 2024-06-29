@@ -31,3 +31,7 @@ This repository wouldn't be possible without the amazing work of
 
 ### 3.2.4. Install sungrow_dashboard.yaml
 
+https://community.home-assistant.io/t/power-flow-card-plus/552326
+
+https://github.com/ulic75/power-flow-card
+
