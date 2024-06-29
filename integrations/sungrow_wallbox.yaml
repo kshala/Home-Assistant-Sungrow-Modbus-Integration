@@ -1,0 +1,766 @@
+common_settings:
+  - &input
+    device_address: !secret wallbox_modbus_slave
+    input_type: input
+  - &holding
+    device_address: !secret wallbox_modbus_slave
+    input_type: holding
+  - &uint16
+    data_type: uint16
+  - &uint32
+    data_type: uint32
+    swap: word
+  - &string
+    data_type: string
+  - &poll_0
+    scan_interval: 0
+  - &poll_5
+    scan_interval: 5
+  - &measurement
+    state_class: measurement
+  - &total
+    state_class: total
+  - &total_increasing
+    state_class: total_increasing
+  - &energy
+    unit_of_measurement: kWh
+    device_class: energy
+  - &voltage
+    unit_of_measurement: V
+    device_class: voltage
+  - &current
+    unit_of_measurement: A
+    device_class: current
+  - &power
+    unit_of_measurement: W
+    device_class: power
+  - &power_factor
+    unit_of_measurement: "%"
+    device_class: power_factor
+  - &precision_1
+    precision: 1
+    scale: 0.1
+  - &precision_2
+    precision: 2
+    scale: 0.01
+  - &precision_3
+    precision: 3
+    scale: 0.001
+
+modbus:
+  - name: SungrowWallbox
+    type: serial
+    port: "/dev/ttyUSB0"
+    baudrate: 9600
+    method: "rtu"
+    bytesize: 8
+    stopbits: 2
+    parity: "N"
+
+    sensors:
+      - name: Sungrow Wallbox Serial number
+        unique_id: sungrow_wallbox_serial_number
+        <<: [*input, *string, *poll_0]
+        address: 21200
+        count: 10 # returns 20 character string
+
+      - name: Sungrow Wallbox Model name
+        unique_id: sungrow_wallbox_model_name
+        <<: [*input, *string, *poll_0]
+        address: 21215
+        count: 8 # returns 16 character string
+
+      - name: Sungrow Wallbox Device type code
+        unique_id: sungrow_wallbox_device_type_code
+        <<: [*input, *uint16, *poll_0]
+        address: 21223
+
+      - name: Sungrow Wallbox Supported phases raw
+        unique_id: sungrow_wallbox_supported_phases_raw
+        address: 21224
+        <<: [*input, *uint16, *poll_0]
+
+      - name: Sungrow Wallbox Software version
+        unique_id: sungrow_wallbox_software_version
+        <<: [*input, *string, *poll_0]
+        address: 21225
+        count: 15 # returns 30 character string
+
+      - name: Sungrow Wallbox Rated voltage
+        unique_id: sungrow_wallbox_rated_voltage
+        <<: [*input, *uint16, *poll_0, *voltage]
+        address: 21261
+
+      - name: Sungrow Wallbox Charger enable status raw
+        unique_id: sungrow_wallbox_charger_enable_status_raw
+        <<: [*input, *uint16, *poll_0]
+        address: 21267
+
+      - name: Sungrow Wallbox Phase status raw
+        unique_id: sungrow_wallbox_phase_status_raw
+        <<: [*input, *uint16, *poll_0]
+        address: 21269
+
+      - name: Sungrow Wallbox Minimum charging power
+        unique_id: sungrow_wallbox_minimum_charging_power
+        <<: [*input, *uint16, *poll_0, *power]
+        address: 21271
+
+      - name: Sungrow Wallbox Maximum charging power
+        unique_id: sungrow_wallbox_maximum_charging_power
+        <<: [*input, *uint32, *poll_0, *power]
+        address: 21272
+
+      - name: Sungrow Wallbox Major fault bit code
+        unique_id: sungrow_wallbox_major_fault_bit_code
+        <<: [*input, *uint16, *poll_5]
+        address: 21274
+
+      - name: Sungrow Wallbox Total energy
+        unique_id: sungrow_wallbox_total_energy
+        <<: [*input, *uint32, *poll_0, *energy, *precision_3, *total_increasing]
+        address: 21299
+        
+      - name: Sungrow Wallbox Phase A charging voltage
+        unique_id: sungrow_wallbox_phase_a_charging_voltage
+        <<: [*input, *uint16, *poll_0, *voltage, *precision_1, *measurement]
+        address: 21301
+        
+      - name: Sungrow Wallbox Phase A charging current
+        unique_id: sungrow_wallbox_phase_a_charging_current
+        <<: [*input, *uint16, *poll_0, *current, *precision_1, *measurement]
+        address: 21302
+
+      - name: Sungrow Wallbox Phase B charging voltage
+        unique_id: sungrow_wallbox_phase_b_charging_voltage
+        <<: [*input, *uint16, *poll_0, *voltage, *precision_1, *measurement]
+        address: 21303
+
+      - name: Sungrow Wallbox Phase B charging current
+        unique_id: sungrow_wallbox_phase_b_charging_current
+        <<: [*input, *uint16, *poll_0, *current, *precision_1, *measurement]
+        address: 21304
+
+      - name: Sungrow Wallbox Phase C charging voltage
+        unique_id: sungrow_wallbox_phase_c_charging_voltage
+        <<: [*input, *uint16, *poll_0, *voltage, *precision_1, *measurement]
+        address: 21305
+
+      - name: Sungrow Wallbox Phase C charging current
+        unique_id: sungrow_wallbox_phase_c_charging_current
+        <<: [*input, *uint16, *poll_0, *current, *precision_1, *measurement]
+        address: 21306
+
+      - name: Sungrow Wallbox Charging power
+        unique_id: sungrow_wallbox_charging_power
+        <<: [*input, *uint32, *poll_0, *power, *measurement]
+        address: 21307
+
+      - name: Sungrow Wallbox Charging energy
+        unique_id: sungrow_wallbox_charging_energy
+        <<: [*input, *uint32, *poll_0, *energy, *precision_3]
+        address: 21309
+
+      - name: Sungrow Wallbox Control pilot voltage
+        unique_id: sungrow_wallbox_control_pilot_voltage
+        <<: [*input, *uint16, *poll_0, *voltage, *precision_2, *measurement]
+        address: 21311
+        
+      - name: Sungrow Wallbox PWM duty cycle
+        unique_id: sungrow_wallbox_pwm_duty_cycle
+        <<: [*input, *uint16, *poll_0, *power_factor, *precision_1, *measurement]
+        address: 21312
+        
+      - name: Sungrow Wallbox Start mode raw
+        unique_id: sungrow_wallbox_start_mode_raw
+        <<: [*input, *uint16, *poll_0]
+        address: 21313
+        
+      - name: Sungrow Wallbox Power request flag raw
+        unique_id: sungrow_wallbox_power_request_flag_raw
+        <<: [*input, *uint16, *poll_0]
+        address: 21314
+        
+      - name: Sungrow Wallbox Power regulation switch raw
+        unique_id: sungrow_wallbox_power_regulation_switch_raw
+        <<: [*input, *uint16, *poll_0]
+        address: 21315
+        
+      - name: Sungrow Wallbox Charging status raw
+        unique_id: sungrow_wallbox_charging_status_raw
+        <<: [*input, *uint16, *poll_5]
+        address: 21316
+        
+      - name: Sungrow Wallbox Charging start time raw
+        unique_id: sungrow_wallbox_charging_start_time_raw
+        <<: [*input, *uint32, *poll_0]
+        address: 21317
+        
+      - name: Sungrow Wallbox Charging end time raw
+        unique_id: sungrow_wallbox_charging_end_time_raw
+        <<: [*input, *uint32, *poll_0]
+        address: 21319
+        
+      #####################
+      # holding registers
+      #####################
+
+      # TODO: Allow setting to zero.
+      - name: Sungrow Wallbox Total energy cleraing
+        unique_id: sungrow_wallbox_total_energy_clearing
+        <<: [*holding, *uint32, *poll_0, *energy, *precision_3, *total_increasing]
+        address: 21200
+        
+      - name: Sungrow Wallbox Output current
+        unique_id: sungrow_wallbox_output_current
+        <<: [*holding, *uint16, *poll_0, *current, *precision_1, *measurement]
+        address: 21202
+        
+      - name: Sungrow Wallbox Phase mode raw
+        unique_id: sungrow_wallbox_phase_mode_raw
+        <<: [*holding, *uint16, *poll_0]
+        address: 21203
+        
+      - name: Sungrow Wallbox Charger status raw
+        unique_id: sungrow_wallbox_charger_status_raw
+        <<: [*holding, *uint16, *poll_0]
+        address: 21210
+
+      - name: Sungrow Wallbox Remote control bit
+        unique_id: sungrow_wallbox_remote_control_bit
+        <<: [*holding, *uint16, *poll_0]
+        address: 21211
+
+      - name: Sungrow Wallbox Mileage per kWh
+        unique_id: sungrow_wallbox_mileage_per_kwh
+        <<: [*holding, *uint16, *poll_0, *precision_1]
+        address: 21231
+        unit_of_measurement: km/kWh
+
+template:
+  - sensor:
+      - name: Sungrow Wallbox Device type
+        unique_id: sungrow_wallbox_device_type
+        availability: "{{states('sensor.sungrow_wallbox_device_type_code') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_device_type_code') | int(default=-1))  == 0x20ED) %}
+            AC007-00
+          {% elif ((states('sensor.sungrow_wallbox_device_type_code') | int(default=-1)) == 0x20DA) %}
+            AC011E-01
+          {% else %}
+            Unknown device code!
+          {% endif %}
+
+      - name: Sungrow Wallbox Supported phases
+        unique_id: sungrow_wallbox_supported_phases
+        availability: "{{states('sensor.sungrow_wallbox_supported_phases_raw') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_supported_phases_raw') | int(default=-1))  == 3) %}
+            Three-phase
+          {% elif ((states('sensor.sungrow_wallbox_supported_phases_raw') | int(default=-1)) == 1) %}
+            Single-phase
+          {% else %}
+            Unknown supported phases!
+          {% endif %}
+
+      - name: Sungrow Wallbox Charger enable status
+        unique_id: sungrow_wallbox_charger_enable_status
+        availability: "{{states('sensor.sungrow_wallbox_charger_enable_status_raw') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_charger_enable_status_raw') | int(default=-1))  == 0) %}
+            Disabled
+          {% elif ((states('sensor.sungrow_wallbox_charger_enable_status_raw') | int(default=-1)) == 1) %}
+            Enabled
+          {% else %}
+            Unknown charger enable status!
+          {% endif %}
+
+      - name: Sungrow Wallbox Phase status
+        unique_id: sungrow_wallbox_phase_status
+        availability: "{{states('sensor.sungrow_wallbox_phase_status_raw') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_phase_status_raw') | int(default=-1))  == 0) %}
+            Three-phase
+          {% elif ((states('sensor.sungrow_wallbox_phase_status_raw') | int(default=-1)) == 1) %}
+            Single-phase
+          {% else %}
+            Unknown phase status!
+          {% endif %}
+
+      - name: Sungrow Wallbox Major fault name
+        unique_id: sungrow_wallbox_major_fault_name
+        availability: "{{states('sensor.sungrow_wallbox_major_fault_bit_code') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_major_fault_bit_code') | int(default=-1))  == 0) %}
+            No fault
+          {% elif ((states('sensor.sungrow_wallbox_major_fault_bit_code') | int(default=-1))  == 1) %}
+            Emergency stop fault
+          {% elif ((states('sensor.sungrow_wallbox_major_fault_bit_code') | int(default=-1)) == 2) %}
+            Power grid fault
+          {% else %}
+            Unknown major fault name!
+          {% endif %}
+
+      - name: Sungrow Wallbox Start mode
+        unique_id: sungrow_wallbox_start_mode
+        availability: "{{states('sensor.sungrow_wallbox_start_mode_raw') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_start_mode_raw') | int(default=-1))  == 0) %}
+            None
+          {% elif ((states('sensor.sungrow_wallbox_start_mode_raw') | int(default=-1))  == 1) %}
+            EMS
+          {% elif ((states('sensor.sungrow_wallbox_start_mode_raw') | int(default=-1)) == 2) %}
+            RFID
+          {% else %}
+            Unkonwn start mode!
+          {% endif %}
+
+      - name: Sungrow Wallbox Power request
+        unique_id: sungrow_wallbox_power_request
+        availability: "{{states('sensor.sungrow_wallbox_power_request_flag_raw') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_power_request_flag_raw') | int(default=-1))  == 0) %}
+            Enable
+          {% elif ((states('sensor.sungrow_wallbox_power_request_flag_raw') | int(default=-1)) == 1) %}
+            Close
+          {% else %}
+            Unknown power request flag!
+          {% endif %}
+
+      - name: Sungrow Wallbox Power regulation
+        unique_id: sungrow_wallbox_power_regulation
+        availability: "{{states('sensor.sungrow_wallbox_power_regulation_switch_raw') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_power_regulation_switch_raw') | int(default=-1))  == 0) %}
+            Close
+          {% elif ((states('sensor.sungrow_wallbox_power_regulation_switch_raw') | int(default=-1)) == 1) %}
+            Open
+          {% else %}
+            Unknown power regulation switch!
+          {% endif %}
+
+      - name: Sungrow Wallbox Charging status
+        unique_id: sungrow_wallbox_charging_status
+        availability: "{{states('sensor.sungrow_wallbox_charging_status_raw') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_charging_status_raw') | int(default=-1))  == 1) %}
+            Idle
+          {% elif ((states('sensor.sungrow_wallbox_charging_status_raw') | int(default=-1)) == 2) %}
+            Standby
+          {% elif ((states('sensor.sungrow_wallbox_charging_status_raw') | int(default=-1)) == 3) %}
+            Charging
+          {% elif ((states('sensor.sungrow_wallbox_charging_status_raw') | int(default=-1)) == 4) %}
+            Suspended (pile side)
+          {% elif ((states('sensor.sungrow_wallbox_charging_status_raw') | int(default=-1)) == 5) %}
+            Suspended (vehicle side)
+          {% elif ((states('sensor.sungrow_wallbox_charging_status_raw') | int(default=-1)) == 6) %}
+            Completed
+          {% elif ((states('sensor.sungrow_wallbox_charging_status_raw') | int(default=-1)) == 7) %}
+            Reserved
+          {% elif ((states('sensor.sungrow_wallbox_charging_status_raw') | int(default=-1)) == 8) %}
+            Disabled
+          {% elif ((states('sensor.sungrow_wallbox_charging_status_raw') | int(default=-1)) == 9) %}
+            Fault
+          {% else %}
+            Unknown charging status!
+          {% endif %}
+
+      - name: Sungrow Wallbox Charging start time
+        unique_id: sungrow_wallbox_charging_start_time
+        state: >
+          {{ as_datetime(states.sensor.sungrow_wallbox_charging_start_time_raw.state).strftime("%d.%m.%Y %H:%M") }}
+
+      - name: Sungrow Wallbox Charging end time
+        unique_id: sungrow_wallbox_charging_end_time
+        state: >
+          {{ as_datetime(states.sensor.sungrow_wallbox_charging_end_time_raw.state).strftime("%d.%m.%Y %H:%M") }}
+
+      - name: Sungrow Wallbox Charging duration
+        unique_id: sungrow_wallbox_charging_duration
+        state: >
+          {{ as_datetime(states.sensor.sungrow_wallbox_charging_end_time_raw.state) - as_datetime(states.sensor.sungrow_wallbox_charging_start_time_raw.state) }}
+
+      - name: Sungrow Wallbox Phase mode
+        unique_id: sungrow_wallbox_phase_mode
+        availability: "{{states('sensor.sungrow_wallbox_phase_mode_raw') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_phase_mode_raw') | int(default=-1))  == 0) %}
+            Three-phase
+          {% elif ((states('sensor.sungrow_wallbox_phase_mode_raw') | int(default=-1)) == 1) %}
+            Single-phase
+          {% else %}
+            Unknown phase mode!
+          {% endif %}
+
+      - name: Sungrow Wallbox Charger status
+        unique_id: sungrow_wallbox_charger_status
+        availability: "{{states('sensor.sungrow_wallbox_charger_status_raw') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_charger_status_raw') | int(default=-1))  == 0) %}
+            Disable
+          {% elif ((states('sensor.sungrow_wallbox_charger_status_raw') | int(default=-1)) == 1) %}
+            Enable
+          {% else %}
+            Unknown charger status!
+          {% endif %}
+
+      - name: Sungrow Wallbox Remote control
+        unique_id: sungrow_wallbox_remote_control
+        availability: "{{states('sensor.sungrow_wallbox_remote_control_bit') | is_number}}"
+        state: >-
+          {% if ((states('sensor.sungrow_wallbox_remote_control_bit') | int(default=-1))  == 0) %}
+            Start charging
+          {% elif ((states('sensor.sungrow_wallbox_remote_control_bit') | int(default=-1)) == 1) %}
+            Stop charging
+          {% else %}
+            Unknown remote control bit!
+          {% endif %}
+
+      - name: Sungrow Wallbox Charged range
+        unique_id: sungrow_wallbox_charged_range
+        state: >
+          {{ (((states.sensor.sungrow_wallbox_charging_energy.state | int) * (states.sensor.sungrow_wallbox_mileage_per_kwh.state | int) / 1000) | round(1))}} km
+
+input_number:
+  sungrow_wallbox_set_output_current:
+    name: Sungrow Wallbox Set Output current
+    min: 6
+    max: 16
+    step: 0.1
+
+  sungrow_wallbox_set_mileage_per_kwh:
+    name: Sungrow Wallbox Set Mileage per kwh
+    min: 1
+    max: 10
+    mode: box
+    step: 0.1
+
+input_select:
+  sungrow_wallbox_set_phase_mode:
+    name: Sungrow Wallbox Set Phase mode
+    options:
+      - "Three-phase"
+      - "Single-phase"
+
+  sungrow_wallbox_set_charger_status:
+    name: Sungrow Wallbox Set Charger status
+    options:
+      - "Disable"
+      - "Enable"
+
+  sungrow_wallbox_set_charging_mode:
+    name: Sungrow Wallbox Set Charging mode
+    options:
+      - "Fast charging"
+      - "PV surplus"
+
+input_button:
+  sungrow_wallbox_set_start_charging:
+    name: Sungrow Wallbox Start charging
+    icon: mdi:play
+
+  sungrow_wallbox_set_stop_charging:
+    name: Sungrow Wallbox Stop charging
+    icon: mdi:stop
+
+automation:
+  - id: "sungrow_wallbox_update_output_current"
+    alias: "Sungrow Wallbox Update Output current"
+    trigger:
+      - platform: state
+        entity_id:
+          - input_number.sungrow_wallbox_set_output_current
+    condition:
+      - condition: template
+        value_template: "{{ (states('input_number.sungrow_wallbox_set_output_current') | float) != (states('sensor.sungrow_wallbox_output_current') | float) }}"
+    action:
+      - service: modbus.write_register
+        data_template:
+          hub: SungrowWallbox
+          slave: !secret wallbox_modbus_slave
+          address: 21202
+          value: "{{ (((states('input_number.sungrow_wallbox_set_output_current') | float) * 10) | int) }}"
+      - service: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_wallbox_output_current
+    mode: single
+
+  - id: "sungrow_wallbox_update_output_current_input_number"
+    alias: "Sungrow Wallbox Update Output current input number"
+    trigger:
+      - platform: state
+        entity_id: sensor.sungrow_wallbox_output_current
+    condition:
+      - condition: and
+        conditions:
+          - condition: template
+            value_template: "{{ not is_state('sensor.sungrow_wallbox_output_current', 'unavailable') }}"
+          - condition: template
+            value_template: "{{ (states('input_number.sungrow_wallbox_set_output_current') | float) != (states('sensor.sungrow_wallbox_output_current') | float) }}"
+    action:
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.sungrow_wallbox_set_output_current
+        data:
+          value: "{{ states('sensor.sungrow_wallbox_output_current') | float }}"
+
+  - id: "sungrow_wallbox_update_mileage_per_kwh"
+    alias: "Sungrow Wallbox Update Mileage per kWh"
+    trigger:
+      - platform: state
+        entity_id:
+          - input_number.sungrow_wallbox_set_mileage_per_kwh
+    action:
+      - service: modbus.write_register
+        data_template:
+          hub: SungrowWallbox
+          slave: !secret wallbox_modbus_slave
+          address: 21231
+          value: "{{ ((states('input_number.sungrow_wallbox_set_mileage_per_kwh') | float ) * 10) | int }}"
+      - service: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_wallbox_mileage_per_kwh
+    mode: single
+
+  - id: "sungrow_wallbox_update_phase_mode"
+    alias: "Sungrow Wallbox Update Phase mode"
+    trigger:
+      - platform: state
+        entity_id:
+          - input_select.sungrow_wallbox_set_phase_mode
+    condition: []
+    variables:
+      three_phase: 0
+      single_phase: 1
+    action:
+      - service: modbus.write_register
+        data_template:
+          hub: SungrowWallbox
+          slave: !secret wallbox_modbus_slave
+          address: 21203
+          value: >
+            {% if is_state('input_select.sungrow_wallbox_set_phase_mode', "Three-phase") %}
+              {{three_phase}}
+            {% elif is_state('input_select.sungrow_wallbox_set_phase_mode', "Single-phase") %}
+              {{single_phase}}
+            {% endif %}
+      - service: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id:
+            - sensor.sungrow_wallbox_phase_mode_raw
+            - sensor.sungrow_wallbox_phase_status_raw
+            - sensor.sungrow_wallbox_minimum_charging_power
+            - sensor.sungrow_wallbox_maximum_charging_power
+    mode: single
+
+  - id: "sungrow_wallbox_update_charger_status"
+    alias: "Sungrow Wallbox Update Charger status"
+    trigger:
+      - platform: state
+        entity_id:
+          - input_select.sungrow_wallbox_set_charger_status
+    condition: []
+    variables:
+      disable: 0
+      enable: 1
+    action:
+      - service: modbus.write_register
+        data_template:
+          hub: SungrowWallbox
+          slave: !secret wallbox_modbus_slave
+          address: 21210
+          value: >
+            {% if is_state('input_select.sungrow_wallbox_set_charger_status', "Disable") %}
+              {{disable}}
+            {% elif is_state('input_select.sungrow_wallbox_set_charger_status', "Enable") %}
+              {{enable}}
+            {% endif %}
+      - service: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id:
+            - sensor.sungrow_wallbox_charger_enable_status_raw
+            - sensor.sungrow_wallbox_charger_status_raw
+            - sensor.sungrow_wallbox_power_request_flag_raw
+            - sensor.sungrow_wallbox_power_regulation_switch_raw
+            - sensor.sungrow_wallbox_charging_status_raw
+    mode: single
+
+  - id: "sungrow_wallbox_update_start_charging"
+    alias: "Sungrow Wallbox Update Start charging"
+    trigger:
+      - platform: state
+        entity_id:
+          - input_button.sungrow_wallbox_set_start_charging
+    condition: []
+    variables:
+      start_charging: 0
+      stop_charging: 1
+    action:
+      - service: modbus.write_register
+        data_template:
+          hub: SungrowWallbox
+          slave: !secret wallbox_modbus_slave
+          address: 21211
+          value: >
+            {{start_charging}}
+      - service: modbus.write_register
+        data_template:
+          hub: SungrowWallbox
+          slave: !secret wallbox_modbus_slave
+          address: 21202
+          value: "{{ (states('input_number.sungrow_wallbox_set_output_current') | int) * 10 }}"
+      - service: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id:
+            - sensor.sungrow_wallbox_charging_status_raw
+            - sensor.sungrow_wallbox_remote_control_bit
+    mode: single
+
+  - id: "sungrow_wallbox_update_stop_charging"
+    alias: "Sungrow Wallbox Update Stop charging"
+    trigger:
+      - platform: state
+        entity_id:
+          - input_button.sungrow_wallbox_set_stop_charging
+    condition: []
+    variables:
+      start_charging: 0
+      stop_charging: 1
+    action:
+      - service: modbus.write_register
+        data_template:
+          hub: SungrowWallbox
+          slave: !secret wallbox_modbus_slave
+          address: 21211
+          value: >
+            {{stop_charging}}
+      - service: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id:
+            - sensor.sungrow_wallbox_charging_status_raw
+            - sensor.sungrow_wallbox_remote_control_bit
+    mode: single
+
+  - id: "sungrow_wallbox_update_charging_status"
+    alias: "Sungrow Wallbox Update charging status"
+    trigger:
+      - platform: state
+        entity_id:
+          - sensor.sungrow_wallbox_charging_status_raw
+    condition: []
+    action:
+      - service: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id:
+            - sensor.sungrow_wallbox_control_pilot_voltage
+            - sensor.sungrow_wallbox_pwm_duty_cycle
+            - sensor.sungrow_wallbox_start_mode_raw
+            - sensor.sungrow_wallbox_power_request_flag_raw
+            - sensor.sungrow_wallbox_power_regulation_switch_raw
+            - sensor.sungrow_wallbox_charging_end_time_raw
+            - sensor.sungrow_wallbox_total_energy_cleraing
+            - sensor.sungrow_wallbox_total_energy
+            - sensor.sungrow_wallbox_phase_a_charging_current
+            - sensor.sungrow_wallbox_phase_a_charging_voltage
+            - sensor.sungrow_wallbox_phase_b_charging_current
+            - sensor.sungrow_wallbox_phase_b_charging_voltage
+            - sensor.sungrow_wallbox_phase_c_charging_current
+            - sensor.sungrow_wallbox_phase_c_charging_voltage
+            - sensor.sungrow_wallbox_charging_power
+            - sensor.sungrow_wallbox_charging_energy
+            - sensor.sungrow_wallbox_output_current
+
+  - id: "sungrow_wallbox_automate_fast_updates_while_charging"
+    alias: "Sungrow Wallbox Automate fast updates while charging"
+    trigger:
+      - platform: state
+        entity_id:
+          - sensor.sungrow_wallbox_charging_status_raw
+        to: "3"
+    condition: []
+    action:
+      - service: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_wallbox_charging_start_time_raw
+      - repeat:
+          sequence:
+            - service: homeassistant.update_entity
+              data: {}
+              target:
+                entity_id:
+                  - sensor.sungrow_wallbox_charging_end_time_raw
+                  - sensor.sungrow_wallbox_total_energy_cleraing
+                  - sensor.sungrow_wallbox_total_energy
+                  - sensor.sungrow_wallbox_phase_a_charging_current
+                  - sensor.sungrow_wallbox_phase_a_charging_voltage
+                  - sensor.sungrow_wallbox_phase_b_charging_current
+                  - sensor.sungrow_wallbox_phase_b_charging_voltage
+                  - sensor.sungrow_wallbox_phase_c_charging_current
+                  - sensor.sungrow_wallbox_phase_c_charging_voltage
+                  - sensor.sungrow_wallbox_charging_power
+                  - sensor.sungrow_wallbox_charging_energy
+                  - sensor.sungrow_wallbox_output_current
+            - delay:
+                hours: 0
+                minutes: 0
+                seconds: 5
+                milliseconds: 0
+          while:
+            - condition: state
+              entity_id: sensor.sungrow_wallbox_charging_status_raw
+              state: "3"
+    mode: single
+  
+  - id: "sungrow_wallbox_automate_pv_surplus"
+    alias: "Sungrow Wallbox Automate PV surplus"
+    trigger:
+      - platform: state
+        entity_id: sensor.sungrow_inverter_import_export_power
+    condition:
+      - condition: and
+        conditions:
+          - condition: state
+            entity_id: sensor.sungrow_wallbox_charging_status
+            state: "Charging"
+          - condition: state
+            entity_id: input_select.sungrow_wallbox_set_charging_mode
+            state: "PV surplus"
+    action:
+      - service: modbus.write_register
+        data_template:
+          hub: SungrowWallbox
+          slave: !secret wallbox_modbus_slave
+          address: 21202
+          value: >-
+            {% set import_export_power = states('sensor.sungrow_inverter_import_export_power')|float %}
+            {% set charging_power = states('sensor.sungrow_wallbox_charging_power')|float %}
+            {% set min_current = 6 %}
+            {% set max_current = 16 %}
+            {% if is_state('sensor.sungrow_wallbox_phase_mode', 'Three-phase') %}
+              {% set phase_mode = 3 %}
+              {% set output_voltage = ((states('sensor.sungrow_wallbox_phase_a_charging_voltage')|float + states('sensor.sungrow_wallbox_phase_a_charging_voltage')|float + states('sensor.sungrow_wallbox_phase_a_charging_voltage')|float) / 3.0) %}
+            {% else %}
+              {% set phase_mode = 1 %}
+              {% set output_voltage = (states('sensor.sungrow_wallbox_phase_a_charging_voltage')|float) %}
+            {% endif %}
+            {% set target_power = import_export_power + charging_power %}
+            {% set output_current = target_power / output_voltage / phase_mode %}
+            {% if output_current < min_current %}
+              {{ (min_current * 10) | round }}
+            {% elif output_current > max_current %}
+              {{ (max_current * 10) | round }}
+            {% else %}
+              {{ (output_current * 10) | round }}
+            {% endif %}
+      - service: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_wallbox_output_current
