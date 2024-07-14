@@ -1071,7 +1071,7 @@ template:
           and not is_state('sensor.sungrow_inverter_daily_battery_discharge', 'unavailable')
           }}
         state: >-
-          {{
+          {% set value =
             (
               states('sensor.sungrow_inverter_daily_pv_generation')|float
               - states('sensor.sungrow_inverter_daily_exported_energy')|float
@@ -1079,7 +1079,12 @@ template:
               - states('sensor.sungrow_inverter_daily_battery_charge')|float
               + states('sensor.sungrow_inverter_daily_battery_discharge')|float
             )|int
-          }}
+          %}
+          {% if value >= 0 %}
+            {{ value }}
+          {% else %}
+            0
+          {% endif %}
 
       - name: "Sungrow Inverter Total consumed energy"
         <<: [*energy, *total]
