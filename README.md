@@ -35,12 +35,24 @@ This integration does some things very differently from many other integrations 
 
 ## 2.3. What's upcoming
 
-- Add Inverter firmware information
-- Add Inverter alarm and system fault
+- [ ] Add Inverter firmware information.
+- [ ] Add Inverter alarm and system fault.
+- [ ] Improve Inverter event based sensor updates.
+
+- [ ] Add Wallbox PV surplus overnight automation.
+- [ ] Improve Wallbox PV surplus calculation.
 
 # 3. How to install
 
+Following steps are needed to install the full integration.
+
 ## 3.1. Hardware instructions
+
+For the Sungrow Inverter you will need to use an ethernet cable and connect the LAN port of the inverter to your home network.
+
+![home network diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/kshala/Home-Assistant-Sungrow-Modbus-Integration/setup-repo/assets/home-network-diagram.puml)
+
+![sh10rt modbus ethernet](./assets/sh10rt-modbus-ethernet.png)
 
 ## 3.2. Home Assistant instructions
 
@@ -52,7 +64,17 @@ This integration does some things very differently from many other integrations 
 
 ### 3.2.4. Install sungrow_dashboard.yaml
 
+### 3.2.5. Install Power Flow Card Plus
+
+This is optional. The dashboard uses a special power flow card to demonstrate the power flow of your setup. My favorite solution is Power Flow Card Plus. Check out the GitHub site for how to install.
+
 https://community.home-assistant.io/t/power-flow-card-plus/552326
+https://github.com/flixlix/power-flow-card-plus
 
-https://github.com/ulic75/power-flow-card
 
+<!--
+ https://github.com/Roemer/plantuml-office 
+ https://plantuml.com/de/nwdiag
+ https://plantuml.com/de/stdlib
+ 
+ -->

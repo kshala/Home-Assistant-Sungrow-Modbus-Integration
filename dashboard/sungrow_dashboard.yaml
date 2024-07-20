@@ -66,7 +66,7 @@ views:
         columns: 3
         state_color: true
       - chart_type: line
-        period: hour
+        period: 5minute
         days_to_show: 1
         type: statistics-graph
         entities:
@@ -79,6 +79,7 @@ views:
           - mean
         title: Power distribution last 24 hours
         hide_legend: false
+        logarithmic_scale: false
       - type: entities
         entities:
           - entity: sensor.sungrow_inverter_battery_level
@@ -94,26 +95,139 @@ views:
           - entity: sensor.sungrow_inverter_daily_battery_discharge
             name: Daily battery discharge
         title: Battery
+      - type: custom:power-flow-card-plus
+        entities:
+          battery:
+            entity:
+              '0': s
+              '1': e
+              '2': 'n'
+              '3': s
+              '4': o
+              '5': r
+              '6': .
+              '7': s
+              '8': u
+              '9': 'n'
+              '10': g
+              '11': r
+              '12': o
+              '13': w
+              '14': _
+              '15': i
+              '16': 'n'
+              '17': v
+              '18': e
+              '19': r
+              '20': t
+              '21': e
+              '22': r
+              '23': _
+              '24': b
+              '25': a
+              '26': t
+              '27': t
+              '28': e
+              '29': r
+              '30': 'y'
+              '31': _
+              '32': c
+              '33': h
+              '34': a
+              '35': r
+              '36': g
+              '37': e
+              '38': _
+              '39': p
+              '40': o
+              '41': w
+              '42': e
+              '43': r
+              consumption: sensor.sungrow_inverter_battery_discharge_power
+              production: sensor.sungrow_inverter_battery_charge_power
+            state_of_charge: sensor.sungrow_inverter_battery_level
+            state_of_charge_unit_white_space: false
+          grid:
+            entity:
+              '0': s
+              '1': e
+              '2': 'n'
+              '3': s
+              '4': o
+              '5': r
+              '6': .
+              '7': s
+              '8': u
+              '9': 'n'
+              '10': g
+              '11': r
+              '12': o
+              '13': w
+              '14': _
+              '15': i
+              '16': 'n'
+              '17': v
+              '18': e
+              '19': r
+              '20': t
+              '21': e
+              '22': r
+              '23': _
+              '24': m
+              '25': e
+              '26': t
+              '27': e
+              '28': r
+              '29': _
+              '30': a
+              '31': c
+              '32': t
+              '33': i
+              '34': v
+              '35': e
+              '36': _
+              '37': p
+              '38': o
+              '39': w
+              '40': e
+              '41': r
+              consumption: sensor.sungrow_inverter_import_power
+              production: sensor.sungrow_inverter_export_power
+          solar:
+            entity: sensor.sungrow_inverter_total_dc_power
+            display_zero_state: true
+          fossil_fuel_percentage: {}
+          home:
+            entity: sensor.sungrow_inverter_load_power
+          individual:
+            - entity: sensor.sungrow_wallbox_charging_power
+              name: Wallbox
+              icon: mdi:ev-station
+              display_zero: true
+              display_zero_state: true
+              unit_white_space: true
+              show_direction: false
+        clickable_entities: true
+        display_zero_lines:
+          mode: show
+          transparency: 50
+          grey_color:
+            - 189
+            - 189
+            - 189
+        use_new_flow_rate_model: true
+        w_decimals: 0
+        kw_decimals: 1
+        min_flow_rate: 0.75
+        max_flow_rate: 6
+        max_expected_power: 2000
+        min_expected_power: 0.01
+        watt_threshold: 10000
+        transparency_zero_lines: 0
+        title: Power flow
   - title: Detailed Info
     icon: mdi:solar-power-variant-outline
     cards:
-      - type: entities
-        entities:
-          - entity: sensor.sungrow_inverter_total_dc_power
-            name: Total DC power
-          - entity: sensor.sungrow_inverter_meter_active_power
-            name: Meter active power
-          - entity: sensor.sungrow_inverter_load_power
-            name: Load power
-          - entity: sensor.sungrow_inverter_export_power
-            name: Export power
-          - entity: sensor.sungrow_inverter_import_power
-            name: Import power
-          - entity: sensor.sungrow_inverter_battery_charge_power
-            name: Battery charge power
-          - entity: sensor.sungrow_inverter_battery_discharge_power
-            name: Battery discharge power
-        title: Power
       - type: entities
         entities:
           - entity: sensor.sungrow_inverter_load_power
@@ -141,14 +255,6 @@ views:
           - entity: sensor.sungrow_inverter_grid_frequency
             name: Grid frequency
         title: Grid / Load
-      - type: gauge
-        entity: sensor.sungrow_inverter_battery_level
-        min: 0
-        max: 100
-        severity:
-          green: 70
-          yellow: 40
-          red: 20
       - type: entities
         entities:
           - entity: sensor.sungrow_inverter_daily_pv_generation
@@ -347,6 +453,7 @@ views:
             name: Battery level
           - entity: sensor.sungrow_inverter_battery_health
             name: Battery health
+            icon: mdi:battery-heart-variant
           - entity: sensor.sungrow_inverter_battery_charge_power
             name: Battery charge power
           - entity: sensor.sungrow_inverter_battery_discharge_power

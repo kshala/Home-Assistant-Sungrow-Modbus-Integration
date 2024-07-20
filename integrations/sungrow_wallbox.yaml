@@ -723,7 +723,7 @@ automation:
     alias: "Sungrow Wallbox Automate PV surplus"
     trigger:
       - platform: state
-        entity_id: sensor.sungrow_inverter_import_export_power
+        entity_id: sensor.sungrow_inverter_total_dc_power
     condition:
       - condition: and
         conditions:
@@ -740,19 +740,19 @@ automation:
           slave: !secret wallbox_modbus_slave
           address: 21202
           value: >-
-            {% set import_export_power = states('sensor.sungrow_inverter_import_export_power')|float %}
+            {% set total_dc_power = states('sensor.sungrow_inverter_total_dc_power')|float %}
+            {% set load_power = states('sensor.sungrow_inverter_load_power')|float %}
             {% set charging_power = states('sensor.sungrow_wallbox_charging_power')|float %}
-            {% set min_current = 6 %}
-            {% set max_current = 16 %}
+            {% set rated_voltage = states('sensor.sungrow_wallbox_rated_voltage')|float %}
             {% if is_state('sensor.sungrow_wallbox_phase_mode', 'Three-phase') %}
               {% set phase_mode = 3 %}
-              {% set output_voltage = ((states('sensor.sungrow_wallbox_phase_a_charging_voltage')|float + states('sensor.sungrow_wallbox_phase_a_charging_voltage')|float + states('sensor.sungrow_wallbox_phase_a_charging_voltage')|float) / 3.0) %}
             {% else %}
               {% set phase_mode = 1 %}
-              {% set output_voltage = (states('sensor.sungrow_wallbox_phase_a_charging_voltage')|float) %}
             {% endif %}
-            {% set target_power = import_export_power + charging_power %}
-            {% set output_current = target_power / output_voltage / phase_mode %}
+            {% set target_power = total_dc_power - load_power + charging_power %}
+            {% set output_current = target_power / rated_voltage / phase_mode %}
+            {% set min_current = 6.0 %}
+            {% set max_current = 16.0 %}
             {% if output_current < min_current %}
               {{ (min_current * 10) | round }}
             {% elif output_current > max_current %}
