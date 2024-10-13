@@ -1191,16 +1191,16 @@ input_select:
 automation:
   - id: "sungrow_inverter_update_system_state"
     alias: "Sungrow Inverter Update system state"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_select.sungrow_inverter_set_start_stop
     condition: []
     variables:
       start: 0xCF
       stop: 0xCE
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
@@ -1211,7 +1211,7 @@ automation:
             {% else %}
               {{stop}}
             {% endif %}
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_system_state
@@ -1219,19 +1219,19 @@ automation:
 
   - id: "sungrow_inverter_update_battery_maximum_soc"
     alias: "Sungrow Inverter Update Battery maximum SoC"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_number.sungrow_inverter_set_battery_maximum_soc
     condition: []
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
           address: 13057 # reg 13058
           value: "{{ states('input_number.sungrow_inverter_set_battery_maximum_soc') | int *10}}"
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_battery_maximum_soc
@@ -1239,15 +1239,15 @@ automation:
 
   - id: "sungrow_inverter_update_battery_maximum_soc_input_number"
     alias: "Sungrow Inverter Update Battery maximum SoC input number"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_inverter_battery_maximum_soc
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.sungrow_inverter_battery_maximum_soc', 'unavailable') }}"
-    action:
-      - service: input_number.set_value
+    actions:
+      - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_maximum_soc
         data:
@@ -1256,19 +1256,19 @@ automation:
 
   - id: "sungrow_inverter_update_battery_minimum_soc"
     alias: "Sungrow Inverter Update Battery minimum SoC"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_number.sungrow_inverter_set_battery_minimum_soc
     condition: []
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
           address: 13058 # reg 13059
           value: "{{ states('input_number.sungrow_inverter_set_battery_minimum_soc') | int *10}}"
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_battery_minimum_soc
@@ -1276,15 +1276,15 @@ automation:
 
   - id: "sungrow_inverter_update_battery_minimum_soc_input_number"
     alias: "Sungrow Inverter Update Battery minimum SoC input number"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_inverter_battery_minimum_soc
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.sungrow_inverter_battery_minimum_soc', 'unavailable') }}"
-    action:
-      - service: input_number.set_value
+    actions:
+      - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_minimum_soc
         data:
@@ -1293,19 +1293,19 @@ automation:
 
   - id: "sungrow_inverter_update_battery_backup_soc"
     alias: "Sungrow Inverter Update Battery backup SoC"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_number.sungrow_inverter_set_battery_backup_soc
     condition: []
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
           address: 13099 # reg 13100
           value: "{{ states('input_number.sungrow_inverter_set_battery_backup_soc') | int}}"
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_battery_backup_soc
@@ -1313,15 +1313,15 @@ automation:
 
   - id: "sungrow_inverter_update_battery_backup_soc_input_number"
     alias: "Sungrow Inverter Update Battery backup SoC input number"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_inverter_battery_backup_soc
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.sungrow_inverter_battery_backup_soc', 'unavailable') }}"
-    action:
-      - service: input_number.set_value
+    actions:
+      - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_backup_soc
         data:
@@ -1330,8 +1330,8 @@ automation:
 
   - id: "sungrow_inverter_update_battery_forced_charge_discharge_mode"
     alias: "Sungrow Inverter Update Battery forced charge/discharge mode"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode
     condition: []
@@ -1339,8 +1339,8 @@ automation:
       stop_default: 0x00CC
       forced_charge: 0x00AA
       forced_discharge: 0x00BB
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
@@ -1355,7 +1355,7 @@ automation:
             {% else %}
               {{stop_default}}
             {% endif %}
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw
@@ -1363,15 +1363,15 @@ automation:
 
   - id: "sungrow_inverter_update_battery_forced_charge_discharge_mode_input_select"
     alias: "Sungrow Inverter Update Battery forced charge/discharge mode input select"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw', 'unavailable') }}"
-    action:
-      - service: input_select.select_option
+    actions:
+      - action: input_select.select_option
         target:
           entity_id: input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode
         data:
@@ -1380,8 +1380,8 @@ automation:
 
   - id: "sungrow_inverter_update_ems_mode"
     alias: "Sungrow Inverter Update EMS mode"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_select.sungrow_inverter_set_ems_mode
     condition: []
@@ -1391,8 +1391,8 @@ automation:
       external_ems_mode: 3
       vpp: 4
       microgrid: 8
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
@@ -1411,7 +1411,7 @@ automation:
             {% else %}
               {{self_consumtion_mode}}
             {% endif %}
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_ems_mode_raw
@@ -1419,15 +1419,15 @@ automation:
 
   - id: "sungrow_inverter_update_ems_mode_input_select"
     alias: "Sungrow Inverter Update EMS mode input select"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_inverter_ems_mode_raw
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.sungrow_inverter_ems_mode_raw', 'unavailable') }}"
-    action:
-      - service: input_select.select_option
+    actions:
+      - action: input_select.select_option
         target:
           entity_id: input_select.sungrow_inverter_set_ems_mode
         data:
@@ -1436,16 +1436,16 @@ automation:
 
   - id: "sungrow_inverter_update_export_power_limit_mode"
     alias: "Sungrow Inverter Update Export power limit mode"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_select.sungrow_inverter_set_export_power_limit_mode
     condition: []
     variables:
       export_limit_enable: 0xAA
       export_limit_disable: 0x55
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
@@ -1458,7 +1458,7 @@ automation:
             {% else %}
               {{export_limit_disable}}
             {% endif %}
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_export_power_limit_mode_raw
@@ -1466,15 +1466,15 @@ automation:
 
   - id: "sungrow_inverter_update_export_power_limit_mode_input_select"
     alias: "Sungrow Inverter Update Export power limit mode input select"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_inverter_export_power_limit_mode_raw
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.sungrow_inverter_export_power_limit_mode_raw', 'unavailable') }}"
-    action:
-      - service: input_select.select_option
+    actions:
+      - action: input_select.select_option
         target:
           entity_id: input_select.sungrow_inverter_set_export_power_limit_mode
         data:
@@ -1483,19 +1483,19 @@ automation:
 
   - id: "sungrow_inverter_update_export_power_limit"
     alias: "Sungrow Inverter Update Export power limit"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_number.sungrow_inverter_set_export_power_limit
     condition: []
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
           address: 13073 # reg 13074
           value: "{{ states('input_number.sungrow_inverter_set_export_power_limit') }}"
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_export_power_limit
@@ -1503,15 +1503,15 @@ automation:
 
   - id: "sungrow_inverter_update_export_power_limit_input_number"
     alias: "Sungrow Inverter Update Export power limit input number"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_inverter_export_power_limit
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.sungrow_inverter_export_power_limit', 'unavailable') }}"
-    action:
-      - service: input_number.set_value
+    actions:
+      - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_export_power_limit
         data:
@@ -1520,19 +1520,19 @@ automation:
 
   - id: "sungrow_inverter_update_battery_forced_charge_discharge_power"
     alias: "Sungrow Inverter Update Battery forced charge/discharge power"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_number.sungrow_inverter_set_battery_forced_charge_discharge_power
     condition: []
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
           address: 13051 # reg 13052
           value: "{{ states('input_number.sungrow_inverter_set_battery_forced_charge_discharge_power') | int}}"
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_battery_forced_charge_discharge_power
@@ -1540,15 +1540,15 @@ automation:
 
   - id: "sungrow_inverter_update_battery_forced_charge_discharge_power_input_number"
     alias: "Sungrow Inverter Update Battery forced charge/discharge power input number"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_inverter_battery_forced_charge_discharge_power
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.sungrow_inverter_battery_forced_charge_discharge_power', 'unavailable') }}"
-    action:
-      - service: input_number.set_value
+    actions:
+      - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_forced_charge_discharge_power
         data:
@@ -1557,19 +1557,19 @@ automation:
 
   - id: "sungrow_inverter_update_battery_maximum_charge_power"
     alias: "Sungrow Inverter Update Battery maximum charge power"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_number.sungrow_inverter_set_battery_maximum_charge_power
     condition: []
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
           address: 33046 # reg 33047
           value: "{{ states('input_number.sungrow_inverter_set_battery_maximum_charge_power') |float /10 |int}}"
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_battery_maximum_charge_power
@@ -1577,15 +1577,15 @@ automation:
 
   - id: "sungrow_inverter_update_battery_maximum_charge_power_input_number"
     alias: "Sungrow Inverter Update Battery maximum charge power input number"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_inverter_battery_maximum_charge_power
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.sungrow_inverter_battery_maximum_charge_power', 'unavailable') }}"
-    action:
-      - service: input_number.set_value
+    actions:
+      - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_maximum_charge_power
         data:
@@ -1594,19 +1594,19 @@ automation:
 
   - id: "sungrow_inverter_update_battery_maximum_discharge_power"
     alias: "Sungrow Inverter Update Battery maximum discharge power"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_number.sungrow_inverter_set_battery_maximum_discharge_power
     condition: []
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
           address: 33047 # reg 33048
           value: "{{ states('input_number.sungrow_inverter_set_battery_maximum_discharge_power')  |float /10 |int}}"
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_inverter_battery_maximum_discharge_power
@@ -1614,15 +1614,15 @@ automation:
 
   - id: "sungrow_inverter_update_battery_maximum_discharge_power_input_number"
     alias: "Sungrow Inverter Update Battery maximum discharge power input number"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_inverter_battery_maximum_discharge_power
     condition:
       - condition: template
         value_template: "{{ not is_state('sensor.sungrow_inverter_battery_maximum_discharge_power', 'unavailable')}}"
-    action:
-      - service: input_number.set_value
+    actions:
+      - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_maximum_discharge_power
         data:

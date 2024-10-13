@@ -50,7 +50,7 @@ common_settings:
 modbus:
   - name: SungrowWallbox
     type: serial
-    port: "/dev/ttyUSB0"
+    port: !secret wallbox_modbus_port
     baudrate: 9600
     method: "rtu"
     bytesize: 8
@@ -466,21 +466,21 @@ input_button:
 automation:
   - id: "sungrow_wallbox_update_output_current"
     alias: "Sungrow Wallbox Update Output current"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_number.sungrow_wallbox_set_output_current
     condition:
       - condition: template
         value_template: "{{ (states('input_number.sungrow_wallbox_set_output_current') | float) != (states('sensor.sungrow_wallbox_output_current') | float) }}"
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowWallbox
           slave: !secret wallbox_modbus_slave
           address: 21202
           value: "{{ (((states('input_number.sungrow_wallbox_set_output_current') | float) * 10) | int) }}"
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_wallbox_output_current
@@ -488,8 +488,8 @@ automation:
 
   - id: "sungrow_wallbox_update_output_current_input_number"
     alias: "Sungrow Wallbox Update Output current input number"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: sensor.sungrow_wallbox_output_current
     condition:
       - condition: and
@@ -498,8 +498,8 @@ automation:
             value_template: "{{ not is_state('sensor.sungrow_wallbox_output_current', 'unavailable') }}"
           - condition: template
             value_template: "{{ (states('input_number.sungrow_wallbox_set_output_current') | float) != (states('sensor.sungrow_wallbox_output_current') | float) }}"
-    action:
-      - service: input_number.set_value
+    actions:
+      - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_wallbox_set_output_current
         data:
@@ -507,18 +507,18 @@ automation:
 
   - id: "sungrow_wallbox_update_mileage_per_kwh"
     alias: "Sungrow Wallbox Update Mileage per kWh"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_number.sungrow_wallbox_set_mileage_per_kwh
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowWallbox
           slave: !secret wallbox_modbus_slave
           address: 21231
           value: "{{ ((states('input_number.sungrow_wallbox_set_mileage_per_kwh') | float ) * 10) | int }}"
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_wallbox_mileage_per_kwh
@@ -526,16 +526,16 @@ automation:
 
   - id: "sungrow_wallbox_update_phase_mode"
     alias: "Sungrow Wallbox Update Phase mode"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_select.sungrow_wallbox_set_phase_mode
     condition: []
     variables:
       three_phase: 0
       single_phase: 1
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowWallbox
           slave: !secret wallbox_modbus_slave
@@ -546,7 +546,7 @@ automation:
             {% elif is_state('input_select.sungrow_wallbox_set_phase_mode', "Single-phase") %}
               {{single_phase}}
             {% endif %}
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id:
@@ -558,16 +558,16 @@ automation:
 
   - id: "sungrow_wallbox_update_charger_status"
     alias: "Sungrow Wallbox Update Charger status"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_select.sungrow_wallbox_set_charger_status
     condition: []
     variables:
       disable: 0
       enable: 1
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowWallbox
           slave: !secret wallbox_modbus_slave
@@ -578,7 +578,7 @@ automation:
             {% elif is_state('input_select.sungrow_wallbox_set_charger_status', "Enable") %}
               {{enable}}
             {% endif %}
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id:
@@ -591,29 +591,29 @@ automation:
 
   - id: "sungrow_wallbox_update_start_charging"
     alias: "Sungrow Wallbox Update Start charging"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_button.sungrow_wallbox_set_start_charging
     condition: []
     variables:
       start_charging: 0
       stop_charging: 1
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowWallbox
           slave: !secret wallbox_modbus_slave
           address: 21211
           value: >
             {{start_charging}}
-      - service: modbus.write_register
+      - action: modbus.write_register
         data_template:
           hub: SungrowWallbox
           slave: !secret wallbox_modbus_slave
           address: 21202
           value: "{{ (states('input_number.sungrow_wallbox_set_output_current') | int) * 10 }}"
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id:
@@ -623,23 +623,23 @@ automation:
 
   - id: "sungrow_wallbox_update_stop_charging"
     alias: "Sungrow Wallbox Update Stop charging"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - input_button.sungrow_wallbox_set_stop_charging
     condition: []
     variables:
       start_charging: 0
       stop_charging: 1
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowWallbox
           slave: !secret wallbox_modbus_slave
           address: 21211
           value: >
             {{stop_charging}}
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id:
@@ -649,13 +649,13 @@ automation:
 
   - id: "sungrow_wallbox_update_charging_status"
     alias: "Sungrow Wallbox Update charging status"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_wallbox_charging_status_raw
     condition: []
-    action:
-      - service: homeassistant.update_entity
+    actions:
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id:
@@ -679,20 +679,20 @@ automation:
 
   - id: "sungrow_wallbox_automate_fast_updates_while_charging"
     alias: "Sungrow Wallbox Automate fast updates while charging"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id:
           - sensor.sungrow_wallbox_charging_status_raw
         to: "3"
     condition: []
-    action:
-      - service: homeassistant.update_entity
+    actions:
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_wallbox_charging_start_time_raw
       - repeat:
           sequence:
-            - service: homeassistant.update_entity
+            - action: homeassistant.update_entity
               data: {}
               target:
                 entity_id:
@@ -708,6 +708,8 @@ automation:
                   - sensor.sungrow_wallbox_charging_power
                   - sensor.sungrow_wallbox_charging_energy
                   - sensor.sungrow_wallbox_output_current
+                  - sensor.sungrow_wallbox_pwm_duty_cycle
+                  - sensor.sungrow_wallbox_control_pilot_voltage
             - delay:
                 hours: 0
                 minutes: 0
@@ -721,8 +723,8 @@ automation:
   
   - id: "sungrow_wallbox_automate_pv_surplus"
     alias: "Sungrow Wallbox Automate PV surplus"
-    trigger:
-      - platform: state
+    triggers:
+      - trigger: state
         entity_id: sensor.sungrow_inverter_total_dc_power
     condition:
       - condition: and
@@ -733,8 +735,8 @@ automation:
           - condition: state
             entity_id: input_select.sungrow_wallbox_set_charging_mode
             state: "PV surplus"
-    action:
-      - service: modbus.write_register
+    actions:
+      - action: modbus.write_register
         data_template:
           hub: SungrowWallbox
           slave: !secret wallbox_modbus_slave
@@ -749,7 +751,7 @@ automation:
             {% else %}
               {% set phase_mode = 1 %}
             {% endif %}
-            {% set target_power = total_dc_power - load_power + charging_power %}
+            {% set target_power = total_dc_power - (load_power - charging_power) %}
             {% set output_current = target_power / rated_voltage / phase_mode %}
             {% set min_current = 6.0 %}
             {% set max_current = 16.0 %}
@@ -760,7 +762,7 @@ automation:
             {% else %}
               {{ (output_current * 10) | round }}
             {% endif %}
-      - service: homeassistant.update_entity
+      - action: homeassistant.update_entity
         data: {}
         target:
           entity_id: sensor.sungrow_wallbox_output_current
