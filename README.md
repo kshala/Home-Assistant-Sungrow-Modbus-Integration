@@ -64,7 +64,7 @@ For the Sungrow Inverter you will need to use an ethernet cable and connect the 
 
 ### 3.1.2. Wallbox
 
-Disclaimer: The wallbox takes more effort to connect to Home Assistant and involves disconnecting the Wallbox Modbus wires on the inverter's COM port. The steps are not difficult but always exercise caution when working on electricity or electric devices. It requires powering off your home electricity to safely perform the modification. Only continue if you know what you are doing. Consult your electrician if you want this modification done professionally. The instructions is subject to change and may be incomplete or not specific to your setup or environment. I will not provide any warranty for issues or damages. If you have any questions, feedback or concerns, feel free to reach out.
+Disclaimer: The wallbox takes more effort to connect to Home Assistant and involves disconnecting the Wallbox Modbus wires on the inverter's COM port. The steps are not difficult but always exercise caution when working with electricity or with electronic devices. It requires powering off your home electricity to safely perform the modification. Only continue if you know what you are doing. Consult your electrician if you want this modification done professionally. The instructions is subject to change and may be incomplete or not specific to your setup or environment. I will not provide any warranty for issues or damages. If you have any questions, feedback or concerns, feel free to reach out.
 
 For the Sungrow Wallbox the Home Assistant integration needs a direct Modbus connection via RS485 to get full control over the Wallbox. The data communication uses two wires. You can either connect a USB dongle to your machine that runs Home Assistant or, if supported by your machine like Raspberry PI, connect the two wires to the UART pins. I use a dongle with a CH340 chip that you can get for cheap on Amazon. This is the donle I bought (no affeliate link; I have no relation to the seller or anything) https://amzn.eu/d/0b6UBwyd
 
@@ -72,18 +72,45 @@ Most likely your wallbox's Modbus wires are connected to the inverter's COM port
 
 ![sh10rt connector](./assets/sh10rt-connector.jpg)
 
-1. Make sure to shutdown and turn off the inverter. I chose to turn off the main fuses in the breaker box to disconnect the grid and the backup from the inverter. I also chose to turn off the DC switch to disconnect all PV strings from the inverter. Last I turned off the fuse on the battery itself. That way the inverter should have absolutely no power source to stay on.
-2. Once the inverter is fully turned off, disconnect the COM connector from the port. To do so you'll need to pull the latch on the connector, then pull the connector out of the inverter.
-3. Be careful with the step to prevent breaking wires. Release the pin rail from the connector. The pin rail is the green part inside the connector and hold inside with another latch. Pull the latch and move the connector frame up the cable to get enough access to the connected wires.
-4. The wallbox is connected to pin 2 (Data+) and pin 4 (Data-). Make notes of the wire color before disconnecting. Release the wires one by one. To release a wire, push and hold down the orange latch then carefully pull the wire. You can use tools to push the latch but be careful not to break any wires.
-5. Once the two wires are released from the pin rail, ensure the cable of the two wires is released as well. In my setup that's the orange cable. I carefully removed the adhesive tape to fully remove the cable.
-6. Now reassemble the COM connector and plug it back in to the inverter. Ensure the other pins (smart meter, battery, etc.) have not been affected in any way.
-7. Turn back on the inverter. Make sure the DC switch and all electrical fuses are back on. In my setup I have not observed that a specific order has to be followed but I tend to start with the grid fuse, battery fuse, DC switch and then backup fuse.
-8. Make sure the smart meter, battery and other devices connected to the COM connector are still functional. If you observe anything suspicious, reach out for professional support.
+#### **Step 1: Make sure to shutdown and turn off the inverter.** 
 
-Now we'll connect the wires to the dongle. Connect the wire from pin 2 to the D+ pin of the dongle. Connect the wire from pin 4 to the D- pin of the dongle. Now you can connect the dongle to the Home Assistant machine.
+I chose to turn off the main fuses in the breaker box to disconnect the grid and the backup from the inverter. I also chose to turn off the DC switch to disconnect all PV strings from the inverter. Last I turned off the fuse on the battery itself. That way the inverter should have absolutely no power source to stay on.
+
+#### **Step 2: Once the inverter is fully turned off, disconnect the COM connector from the port.**
+
+To do so you'll need to pull the latch on the connector, then pull the connector out of the inverter.
+
+#### **Step 3: Release the pin rail from the connector.**
+
+Be careful with the step to prevent breaking wires. The pin rail is the green part inside the connector and hold inside with another latch. Pull the latch and move the connector frame up the cable to get enough access to the connected wires.
+
+#### **Step 4: Release the Wallbox Modbus wires.**
+
+The wallbox is connected to pin 2 (Data+) and pin 4 (Data-). Make notes of the wire color before disconnecting. To release a wire, push and hold down the orange latch then carefully pull the wire. You can use tools to push the latch but be careful not to break any wires.
+
+#### **Step 5: Ensure the cable of the two wires is released as well.**
+
+Once the two wires are released from the pin rail, release the cable as well. In my setup that's the orange cable which is taped together with all other cables. I carefully removed the adhesive tape to fully remove the cable.
+
+#### **Step 6: Now reassemble the COM connector and plug it back in to the inverter.**
+
+Ensure the other pins (smart meter, battery, etc.) have not been affected in any way.
+
+#### **Step 7. Turn back on the inverter.**
+
+Make sure the DC switch and all electrical fuses are back on. In my setup I have not observed that a specific order has to be followed but I tend to start with the grid fuse, battery fuse, DC switch and then backup fuse.
+
+#### **Step 8: Make sure the smart meter, battery and other devices connected to the COM connector are still functional.**
+
+If you observe anything suspicious, reach out for professional support.
+
+#### **Step 9: Connect the Wallbox Modbus wires to the Modbus USB dongle.**
+
+Connect the wire from pin 2 to the D+ pin of the dongle. Connect the wire from pin 4 to the D- pin of the dongle. Now you can connect the dongle to the Home Assistant machine. The machine should auto detect the device as `/dev/ttyUSB0`.
 
 ## 3.2. Home Assistant instructions
+
+After wiring up the inverter and the wallbox, it comes to setup both in Home Assistant.
 
 ### 3.2.1. Update secrets.yaml
 

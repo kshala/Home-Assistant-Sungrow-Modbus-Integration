@@ -24,6 +24,7 @@ nwdiag {
   inverter -- mppt1;
   inverter -- mppt2;
   inverter -- battery;
+  inverter [ address = "COM port" description = "Inverter" ]
   battery [ address = "CAN" description = "Battery" ];
   ha -- wallbox;
   ha [ address = "RS485\nDongle" ]
