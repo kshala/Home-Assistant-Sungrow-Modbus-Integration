@@ -48,23 +48,19 @@ This integration does some things very differently from many other integrations 
 - [ ] Define better power and energy tabs for dashboards.
 - [ ] Add configuration tabs for each dashboard.
 
-# 3. How to install
-
-Following steps are needed to install the integration.
-
-## 3.1. Hardware instructions
+# 3. Setup Hardware
 
 The network diagram represents how Home Assistant is connected in my home network together with the inverter and the wallbox.
 
 ![home network diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/kshala/Home-Assistant-Sungrow-Modbus-Integration/setup-repo/assets/home-network-diagram.puml)
 
-### 3.1.1. Inverter
+## 3.1. Setup Inverter
 
 For the Sungrow Inverter you will need to use an ethernet cable and connect the LAN port of the inverter to your home network. Your DHCP server, most likely operated by your home router, will assign an IP address to your inverter. You will need to find the assigned IP address from your DHCP server / your home router.
 
 ![sh10rt modbus ethernet](./assets/sh10rt-modbus-ethernet.jpg)
 
-### 3.1.2. Wallbox
+## 3.2. Setup Wallbox
 
 Disclaimer: The wallbox takes more effort to connect to Home Assistant and involves disconnecting the Wallbox Modbus wires on the inverter's COM port. The steps are not difficult but always exercise caution when working with electricity or with electronic devices. It requires powering off your home electricity to safely perform the modification. Only continue if you know what you are doing. Consult your electrician if you want this modification done professionally. The instructions is subject to change and may be incomplete or not specific to your setup or environment. I will not provide any warranty for issues or damages. If you have any questions, feedback or concerns, feel free to reach out.
 
@@ -74,47 +70,47 @@ Most likely your wallbox's Modbus wires are connected to the inverter's COM port
 
 ![sh10rt connector](./assets/sh10rt-connector.jpg)
 
-#### **Step 1: Make sure to shutdown and turn off the inverter.** 
+### **Step 1: Make sure to shutdown and turn off the inverter.** 
 
 I chose to turn off the main fuses in the breaker box to disconnect the grid and the backup from the inverter. I also chose to turn off the DC switch to disconnect all PV strings from the inverter. Last I turned off the fuse on the battery itself. That way the inverter should have absolutely no power source to stay on.
 
-#### **Step 2: Once the inverter is fully turned off, disconnect the COM connector from the port.**
+### **Step 2: Once the inverter is fully turned off, disconnect the COM connector from the port.**
 
 To do so you'll need to pull the latch on the connector, then pull the connector out of the inverter.
 
-#### **Step 3: Release the pin rail from the connector.**
+### **Step 3: Release the pin rail from the connector.**
 
 Be careful with the step to prevent breaking wires. The pin rail is the green part inside the connector and hold inside with another latch. Pull the latch and move the connector frame up the cable to get enough access to the connected wires.
 
-#### **Step 4: Release the Wallbox Modbus wires.**
+### **Step 4: Release the Wallbox Modbus wires.**
 
 The wallbox is connected to pin 2 (Data+) and pin 4 (Data-). Make notes of the wire color before disconnecting. To release a wire, push and hold down the orange latch then carefully pull the wire. You can use tools to push the latch but be careful not to break any wires.
 
-#### **Step 5: Ensure the cable of the two wires is released as well.**
+### **Step 5: Ensure the cable of the two wires is released as well.**
 
 Once the two wires are released from the pin rail, release the cable as well. In my setup that's the orange cable which is taped together with all other cables. I carefully removed the adhesive tape to fully remove the cable.
 
-#### **Step 6: Now reassemble the COM connector and plug it back in to the inverter.**
+### **Step 6: Now reassemble the COM connector and plug it back in to the inverter.**
 
 Ensure the other pins (smart meter, battery, etc.) have not been affected in any way.
 
-#### **Step 7. Turn back on the inverter.**
+### **Step 7. Turn back on the inverter.**
 
 Make sure the DC switch and all electrical fuses are back on. In my setup I have not observed that a specific order has to be followed but I tend to start with the grid fuse, battery fuse, DC switch and then backup fuse.
 
-#### **Step 8: Make sure the smart meter, battery and other devices connected to the COM connector are still functional.**
+### **Step 8: Make sure the smart meter, battery and other devices connected to the COM connector are still functional.**
 
 If you observe anything suspicious, reach out for professional support.
 
-#### **Step 9: Connect the Wallbox Modbus wires to the Modbus USB dongle.**
+### **Step 9: Connect the Wallbox Modbus wires to the Modbus USB dongle.**
 
 Connect the wire from pin 2 to the D+ pin of the dongle. Connect the wire from pin 4 to the D- pin of the dongle. Now you can connect the dongle to the Home Assistant machine. The machine should auto detect the device as `/dev/ttyUSB0`.
 
-## 3.2. Home Assistant instructions
+# 4. Setup Home Assistant
 
 After wiring up the inverter and the wallbox, it comes to setup both in Home Assistant. These steps involve changing and adding yaml files in Home Assistant. I recommend installing the Visual Studio Code Add-on in Home Assistant. Navigate to Settings and open the Add-on Store. Search for Studio Code Server and install.
 
-### 3.2.1. Update configuration.yaml
+## 4.1. Update configuration.yaml
 
 This integration uses yaml files which we want to store in a folder called `integrations`. To make Home Assistant recognize the yaml files we need to make it search for integrations in this folder.
 
@@ -127,7 +123,7 @@ homeassistant:
 
 For good measure, use Studio Code Server in Home Assistant and create the folder called `integrations`.
 
-### 3.2.2. Update secrets.yaml
+## 4.2. Update secrets.yaml
 
 This file is used to write down your configuration of your inverter and wallbox. This includes the IP address of your inverter and the serial port name of the RS485 serial dongle. These configuration parameters are used by the actual integration files.
 
@@ -148,7 +144,7 @@ wallbox_modbus_port: "/dev/ttyUSB0"
 wallbox_modbus_slave: 248
 ```
 
-### 3.2.3. Install sungrow_inverter.yaml
+## 4.3. Install sungrow_inverter.yaml
 
 The file sungrow_inverter.yaml contains the Modbus integration for the inverter including all sensors, helpers, input controls and automations.
 
@@ -156,7 +152,7 @@ In GitHub navigate to the integrations folder in this repository and download th
 
 Open Studio Code Server in Home Assistant. Right click on the previously created folder `integrations` and select `Upload…`. Select the downloaded file and hit Open. 
 
-### 3.2.4. Install sungrow_wallbox.yaml
+## 4.4. Install sungrow_wallbox.yaml
 
 You can skip this step if you don't have a Sungrow Wallbox or don't want to change the wiring.
 
@@ -166,7 +162,7 @@ In GitHub navigate to the integrations folder in this repository and download th
 
 Open Studio Code Server in Home Assistant. Right click on the previously created folder `integrations` and select `Upload…`. Select the downloaded file and hit Open. 
 
-### 3.2.5. Install sungrow_dashboard.yaml
+## 4.5. Install sungrow_dashboard.yaml
 
 You can skip this step if you don't want to use my basic Home Assistant dashboard for the inverter and wallbox.
 
@@ -176,14 +172,14 @@ In Home Assistant go to Settings, Dashboards, then click on Create Dashboard. Se
 
 In GitHub navigate to the dashboard folder in this repository and open the file `sungrow_dashboard.yaml`. In the top right click on Copy raw file. Now back to Home Assistant paste the copied text into the Raw-Config editor. Now click `Save`, then `Done`. The new dashboard is immediately applied. Don't worry if the dashboard doesn't show values for the entities. The integrations are not yet applied.
 
-### 3.2.6. Install Power Flow Card Plus
+## 4.6. Install Power Flow Card Plus
 
 This is optional. The dashboard uses a special power flow card to demonstrate the power flow of your setup. My favorite solution is Power Flow Card Plus. Check out the GitHub site for how to install.
 
 https://community.home-assistant.io/t/power-flow-card-plus/552326
 https://github.com/flixlix/power-flow-card-plus
 
-## 3.3. Restart Home Assistant
+## 4.7. Restart Home Assistant
 
 In order to apply the integrations you need to restart Home Assistant. Go to `Developer tools` and click on `Restart`. Select `Restart Home Assistant and confirm.
 
