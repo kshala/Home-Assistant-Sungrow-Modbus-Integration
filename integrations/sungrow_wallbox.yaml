@@ -540,12 +540,7 @@ automation:
           hub: SungrowWallbox
           slave: !secret wallbox_modbus_slave
           address: 21203
-          value: >
-            {% if is_state('input_select.sungrow_wallbox_set_phase_mode', "Three-phase") %}
-              {{three_phase}}
-            {% elif is_state('input_select.sungrow_wallbox_set_phase_mode', "Single-phase") %}
-              {{single_phase}}
-            {% endif %}
+          value: "{{ three_phase if is_state('sensor.sungrow_wallbox_phase_mode', 'Three-phase') else single_phase }}"
       - action: homeassistant.update_entity
         data: {}
         target:
@@ -735,6 +730,12 @@ automation:
           - condition: state
             entity_id: input_select.sungrow_wallbox_set_charging_mode
             state: "PV surplus"
+    variables:
+      significance_counter: 0
+      significance_threshold: 0.5
+      min_current: 6.0
+      max_current: 16.0
+      phase_mode: "{{ 3 if is_state('sensor.sungrow_wallbox_phase_mode', 'Three-phase') else 1 }}"
     actions:
       - action: modbus.write_register
         data_template:
@@ -746,22 +747,23 @@ automation:
             {% set load_power = states('sensor.sungrow_inverter_load_power')|float %}
             {% set charging_power = states('sensor.sungrow_wallbox_charging_power')|float %}
             {% set rated_voltage = states('sensor.sungrow_wallbox_rated_voltage')|float %}
-            {% if is_state('sensor.sungrow_wallbox_phase_mode', 'Three-phase') %}
-              {% set phase_mode = 3 %}
-            {% else %}
-              {% set phase_mode = 1 %}
-            {% endif %}
+            {% set last_output_current = states('sensor.sungrow_wallbox_output_current')|float %}
             {% set target_power = total_dc_power - (load_power - charging_power) %}
-            {% set output_current = target_power / rated_voltage / phase_mode %}
-            {% set min_current = 6.0 %}
-            {% set max_current = 16.0 %}
-            {% if output_current < min_current %}
-              {{ (min_current * 10) | round }}
-            {% elif output_current > max_current %}
-              {{ (max_current * 10) | round }}
+            {% set target_output_current = (target_power / rated_voltage / phase_mode)|round(1) %}
+            {% set target_output_current = [[min_current, target_output_current]|max, max_current]|min %}
+            {% if (target_output_current - last_output_current) > significance_threshold %}
+              {% set target_output_current = last_output_current + significance_threshold %}
+              {% set significance_counter = 0 %}
+            {% elif (last_output_current - target_output_current) > significance_threshold %}
+              {% set target_output_current = last_output_current - significance_threshold %}
+              {% set significance_counter = 0 %}
+            {% elif significance_counter >= 10 %}
+              {% set significance_counter = 0 %}
             {% else %}
-              {{ (output_current * 10) | round }}
+              {% set target_output_current = last_output_current %}
+              {% set significance_counter = significance_counter + 1 %}
             {% endif %}
+            {{ (target_output_current * 10)|round }}
       - action: homeassistant.update_entity
         data: {}
         target:
