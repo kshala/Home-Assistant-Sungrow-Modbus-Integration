@@ -1,0 +1,1630 @@
+common_settings:
+  - &input
+    device_address: !secret sungrow_modbus_slave
+    input_type: input
+  - &holding
+    device_address: !secret sungrow_modbus_slave
+    input_type: holding
+  - &sint16
+    data_type: int16
+  - &sint32
+    data_type: int32
+    swap: word
+  - &uint16
+    data_type: uint16
+  - &uint32
+    data_type: uint32
+    swap: word
+  - &string
+    data_type: string
+  - &poll_0
+    scan_interval: 0
+  - &poll_5
+    scan_interval: 5
+  - &poll_10
+    scan_interval: 10
+  - &poll_60
+    scan_interval: 60
+  - &poll_600
+    scan_interval: 600
+  - &measurement
+    state_class: measurement
+  - &total
+    state_class: total
+  - &total_increasing
+    state_class: total_increasing
+  - &temperature
+    unit_of_measurement: °C
+    device_class: temperature
+  - &energy
+    unit_of_measurement: kWh
+    device_class: energy
+  - &energy_storage
+    unit_of_measurement: kWh
+    device_class: energy_storage
+  - &voltage
+    unit_of_measurement: V
+    device_class: voltage
+  - &current
+    unit_of_measurement: A
+    device_class: current
+  - &power
+    unit_of_measurement: W
+    device_class: power
+  - &reactive_power
+    unit_of_measurement: var
+    device_class: reactive_power
+  - &frequency
+    unit_of_measurement: Hz
+    device_class: frequency
+  - &battery
+    unit_of_measurement: "%"
+    device_class: battery
+  - &power_factor
+    unit_of_measurement: "%"
+    device_class: power_factor
+  - &precision_1
+    precision: 1
+    scale: 0.1
+  - &precision_2
+    precision: 2
+    scale: 0.01
+  - &precision_3
+    precision: 3
+    scale: 0.001
+  - &scale_10
+    scale: 10
+  - &scale_100
+    scale: 100
+
+modbus:
+  - name: SungrowInverter
+    type: tcp
+    host: !secret sungrow_modbus_host_ip
+    port: !secret sungrow_modbus_port
+
+    sensors:
+      - name: Sungrow Inverter Serial number
+        address: 4989 # reg 4990
+        <<: [*input, *string, *poll_0]
+        count: 10 # returns 20 character string
+
+      - name: Sungrow Inverter Device type code
+        address: 4999 # reg 5000
+        <<: [*input, *uint16, *poll_0]
+
+      - name: Sungrow Inverter Daily PV generation & battery discharge
+        address: 5002 # reg 5003
+        <<: [*input, *uint16, *precision_1, *energy, *total_increasing, *poll_600]
+
+      - name: Sungrow Inverter Total PV generation & battery discharge
+        address: 5003 # reg 5004
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Temperature
+        address: 5007 # reg 5008
+        <<: [*input, *sint16, *temperature, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter MPPT1 voltage
+        address: 5010 # reg 5011
+        <<: [*input, *uint16, *voltage, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter MPPT1 current
+        address: 5011 # reg 5012
+        <<: [*input, *uint16, *current, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter MPPT2 voltage
+        address: 5012 # reg 5013
+        <<: [*input, *uint16, *voltage, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter MPPT2 current
+        address: 5013 # reg 5014
+        <<: [*input, *uint16, *current, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Total DC power
+        address: 5016 # reg 5017
+        <<: [*input, *uint32, *power, *measurement, *poll_5]
+
+      - name: Sungrow Inverter Phase A voltage
+        address: 5018 # reg: 5019
+        <<: [*input, *uint16, *voltage, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Phase B voltage
+        address: 5019 # reg: 5020
+        <<: [*input, *uint16, *voltage, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Phase C voltage
+        address: 5020 # reg: 5021
+        <<: [*input, *uint16, *voltage, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Grid frequency
+        address: 5241 # reg 5242
+        <<: [*input, *uint16, *frequency, *measurement, *precision_2, *poll_10]
+
+      - name: Sungrow Inverter Backup frequency
+        address: 5733 # reg 5734
+        <<: [*input, *uint16, *frequency, *measurement, *precision_2, *poll_10]
+
+      - name: Sungrow Inverter Reactive power
+        address: 5032 # reg 5033
+        <<: [*input, *sint32, *reactive_power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Power factor
+        address: 5034 # reg 5035
+        <<: [*input, *sint16, *power_factor, *measurement, *precision_3, *poll_10]
+
+      - name: Sungrow Inverter Meter active power raw
+        address: 5600 # reg 5601
+        <<: [*input, *sint32, *power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Meter phase A active power raw
+        address: 5602 # reg 5603
+        <<: [*input, *sint32, *power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Meter phase B active power raw
+        address: 5604 # reg 5605
+        <<: [*input, *sint32, *power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Meter phase C active power raw
+        address: 5606 # reg 5607
+        <<: [*input, *sint32, *power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter minimum export power limit
+        address: 5621 # reg 5622
+        <<: [*input, *uint16, *power, *measurement, *scale_10, *poll_600]
+
+      - name: Sungrow Inverter maximum export power limit
+        address: 5622 # reg 5623
+        <<: [*input, *uint16, *power, *measurement, *scale_10, *poll_600]
+
+      - name: Sungrow Inverter Battery charge/discharge rated power
+        address: 5627 # reg 5628
+        <<: [*input, *uint16, *power, *measurement, *scale_100, *poll_600]
+
+      - name: Sungrow Inverter BMS maximum charge current
+        address: 5634 # reg 5635
+        <<: [*input, *uint16, *current, *measurement, *poll_60]
+
+      - name: Sungrow Inverter BMS maximum discharge current
+        address: 5635 # reg 5636
+        <<: [*input, *uint16, *current, *measurement, *poll_60]
+
+      - name: Sungrow Inverter Battery capacity
+        address: 5638 # reg 5639
+        <<: [*input, *uint16, *energy, *precision_2, *poll_600]
+
+      - name: Sungrow Inverter Backup phase A current
+        address: 5719 # reg 5720
+        <<: [*input, *sint16, *current, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Backup phase B current
+        address: 5720 # reg 5721
+        <<: [*input, *sint16, *current, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Backup phase C current
+        address: 5721 # reg 5722
+        <<: [*input, *sint16, *current, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Backup phase A power
+        address: 5722 # reg 5723
+        <<: [*input, *sint16, *power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Backup phase B power
+        address: 5723 # reg 5724
+        <<: [*input, *sint16, *power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Backup phase C power
+        address: 5724 # reg 5725
+        <<: [*input, *sint16, *power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Total backup power
+        address: 5725 # reg 5726
+        <<: [*input, *uint32, *power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Backup Phase A voltage
+        address: 5730 # reg 5731
+        <<: [*input, *uint16, *voltage, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Backup Phase B voltage
+        address: 5731 # reg 5732
+        <<: [*input, *uint16, *voltage, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Backup Phase C voltage
+        address: 5732 # reg 5733
+        <<: [*input, *uint16, *voltage, *measurement, *precision_1, *poll_10]
+
+      # Start monthly PV generation
+      - name: Sungrow Inverter Monthly PV generation (January)
+        address: 6226 # reg 6227
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (February)
+        address: 6227 # reg 6228
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (March)
+        address: 6228 # reg 6229
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (April)
+        address: 6229 # reg 6230
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (May)
+        address: 6230 # reg 6231
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (June)
+        address: 6231 # reg 6232
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (July)
+        address: 6232 # reg 6233
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (August)
+        address: 6233 # reg 6234
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (September)
+        address: 6234 # reg 6235
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (October)
+        address: 6235 # reg 6236
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (November)
+        address: 6236 # reg 6237
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly PV generation (December)
+        address: 6237 # reg 6238
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+      # End monthly PV generation
+
+      # Start yearly pv generation
+      - name: Sungrow Inverter Yearly PV generation (2019)
+        address: 6257 # reg 6258
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2020)
+        address: 6259 # reg 6260
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2021)
+        address: 6261 # reg 6262
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2022)
+        address: 6263 # reg 6264
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2023)
+        address: 6265 # reg 6266
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2024)
+        address: 6267 # reg 6268
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2025)
+        address: 6269 # reg 6270
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2026)
+        address: 6271 # reg 6272
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2027)
+        address: 6273 # reg 6274
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2028)
+        address: 6275 # reg 6276
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2029)
+        address: 6277 # reg 6278
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2030)
+        address: 6279 # reg 6280
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2031)
+        address: 6281 # reg 6282
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2032)
+        address: 6283 # reg 6284
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2033)
+        address: 6285 # reg 6286
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly PV generation (2034)
+        address: 6287 # reg 6288
+        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+      # End yearly pv generation
+
+      # Start monthly export
+      - name: Sungrow Inverter Monthly export (January)
+        address: 6595 # reg 6596
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (February)
+        address: 6596 # reg 6597
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (March)
+        address: 6597 # reg 6598
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (April)
+        address: 6598 # reg 6599
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (May)
+        address: 6599 # reg 6600
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (June)
+        address: 6600 # reg 6601
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (July)
+        address: 6601 # reg 6602
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (August)
+        address: 6602 # reg 6603
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (September)
+        address: 6603 # reg 6604
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (October)
+        address: 6604 # reg 6605
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (November)
+        address: 6605 # reg 6606
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Monthly export (December)
+        address: 6606 # reg 6607
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+      # End monthly export
+
+      # Start yearly export energy from PV
+      - name: Sungrow Inverter Yearly Export (2019)
+        address: 6615 # reg 6616
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2020)
+        address: 6617 # reg 6618
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2021)
+        address: 6619 # reg 6620
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2022)
+        address: 6621 # reg 6622
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2023)
+        address: 6623 # reg 6624
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2024)
+        address: 6625 # reg 6626
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2025)
+        address: 6627 # reg 6628
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2026)
+        address: 6629 # reg 6630
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2027)
+        address: 6631 # reg 6632
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2028)
+        address: 6633 # reg 6634
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2029)
+        address: 6635 # reg 6636
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2030)
+        address: 6637 # reg 6638
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2031)
+        address: 6639 # reg 6640
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2032)
+        address: 6641 # reg 6642
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2033)
+        address: 6643 # reg 6644
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Yearly Export (2034)
+        address: 6645 # reg 6646
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+      # End yearly export energy from PV
+
+      - name: Sungrow Inverter System state
+        address: 12999 # reg 13000
+        <<: [*input, *uint16, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Power flow status
+        address: 13000 # reg 13001
+        <<: [*input, *uint16, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Daily PV generation
+        address: 13001 # reg 13002
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Total PV generation
+        address: 13002 # reg 13003
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Daily exported energy from PV
+        address: 13004 # reg 13005
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Total exported energy from PV
+        address: 13005 # reg 13006
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Load power
+        address: 13007 # reg 13008
+        <<: [*input, *sint32, *power, *measurement, *poll_5]
+
+      - name: Sungrow Inverter Import/Export power
+        address: 13009 # reg 13010
+        <<: [*input, *sint32, *power, *measurement, *poll_5]
+
+      - name: Sungrow Inverter Daily battery charge from PV
+        address: 13011 # reg 13012
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Total battery charge from PV
+        address: 13012 # reg 13013
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Daily direct energy consumption
+        address: 13016 # reg 13017
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Total direct energy consumption
+        address: 13017 # reg 13018
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Battery voltage
+        address: 13019 # reg 13020
+        <<: [*input, *uint16, *voltage, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Battery current
+        address: 13020 # reg 13021
+        <<: [*input, *uint16, *current, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Battery power
+        address: 5213 # reg 5214
+        <<: [*input, *sint32, *power, *measurement, *poll_5]
+
+      - name: Sungrow Inverter Battery level
+        address: 13022 # reg 13023
+        <<: [*input, *uint16, *battery, *measurement, *precision_1, *poll_60]
+
+      - name: Sungrow Inverter Battery health
+        address: 13023 # reg 13024
+        <<: [*input, *uint16, *battery, *measurement, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Battery temperature
+        address: 13024 # reg 13025
+        <<: [*input, *sint16, *temperature, *measurement, *precision_1, *poll_60]
+
+      - name: Sungrow Inverter Daily battery discharge
+        address: 13025 # reg 13026
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Total battery discharge
+        address: 13026 # reg 13027
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Phase A current
+        address: 13030 # reg 13031
+        <<: [*input, *sint16, *current, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Phase B current
+        address: 13031 # reg 13032
+        <<: [*input, *sint16, *current, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Phase C current
+        address: 13032 # reg 13033
+        <<: [*input, *sint16, *current, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Total active power
+        address: 13033 # reg 13034
+        <<: [*input, *sint32, *power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Daily imported energy
+        address: 13035 # reg 13036
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Total imported energy
+        address: 13036 # reg 13037
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Daily battery charge
+        address: 13039 # reg 13040
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Total battery charge
+        address: 13040 # reg 13041
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Daily exported energy
+        address: 13044 # reg 13045
+        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+
+      - name: Sungrow Inverter Total exported energy
+        address: 13045 # reg 13046
+        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+
+      #####################
+      # holding registers
+      #####################
+      - name: Sungrow Inverter Start/Stop
+        address: 12999 # reg 13000
+        <<: [*holding, *uint16, *measurement, *poll_10]
+
+      - name: Sungrow Inverter EMS mode raw
+        address: 13049 # reg 13050
+        <<: [*holding, *uint16, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Battery forced charge/discharge mode raw
+        address: 13050 # reg 13051
+        <<: [*holding, *uint16, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Battery forced charge/discharge power
+        address: 13051 # reg 13052
+        <<: [*holding, *uint16, *poll_10, *power, *measurement]
+
+      - name: Sungrow Inverter Battery maximum SoC
+        address: 13057 # reg 13058
+        <<: [*holding, *uint16, *battery, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Battery minimum SoC
+        address: 13058 # reg 13059
+        <<: [*holding, *uint16, *battery, *measurement, *precision_1, *poll_10]
+
+      - name: Sungrow Inverter Export power limit
+        address: 13073 # reg 13074
+        <<: [*holding, *uint16, *power, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Export power limit mode raw
+        address: 13086 # reg 13087
+        <<: [*holding, *uint16, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Battery backup SoC
+        address: 13099 # reg 13100
+        <<: [*holding, *uint16, *battery, *measurement, *poll_10]
+
+      - name: Sungrow Inverter Battery maximum charge power
+        address: 33046 # reg 33047
+        <<: [*holding, *uint16, *power, *measurement, *scale_10, *poll_10]
+
+      - name: Sungrow Inverter Battery maximum discharge power
+        address: 33047 # reg 33048
+        <<: [*holding, *uint16, *power, *measurement, *scale_10, *poll_10]
+
+template:
+  - binary_sensor:
+      - name: Sungrow Inverter PV generating
+        availability: "{{ not is_state('sensor.sungrow_inverter_power_flow_status', 'unavailable') }}"
+        state: "{{ states('sensor.sungrow_inverter_power_flow_status')|int(default=0)|bitwise_and(0x1) > 0 }}"
+        icon: >
+          {% if is_state("binary_sensor.sungrow_inverter_pv_generating", "on") %}
+            mdi:solar-power
+          {% else %}
+            mdi:weather-night-partly-cloudy
+          {% endif %}
+
+      - name: Sungrow Inverter Battery charging
+        availability: "{{ not is_state('sensor.sungrow_inverter_power_flow_status', 'unavailable') }}"
+        state: "{{ states('sensor.sungrow_inverter_power_flow_status')|int(default=0)|bitwise_and(0x2) > 0 }}"
+        icon: >
+          {% if is_state("binary_sensor.sungrow_inverter_battery_charging", "on") %}
+            mdi:battery-plus
+          {% else %}
+            mdi:battery
+          {% endif %}
+
+      - name: Sungrow Inverter Battery discharging
+        availability: "{{ not is_state('sensor.sungrow_inverter_power_flow_status', 'unavailable') }}"
+        state: "{{ states('sensor.sungrow_inverter_power_flow_status')|int(default=0)|bitwise_and(0x4) > 0 }}"
+        icon: >
+          {% if is_state("binary_sensor.sungrow_inverter_battery_discharging", "on") %}
+            mdi:battery-minus
+          {% else %}
+            mdi:battery
+          {% endif %}
+
+      - name: Sungrow Inverter Exporting power
+        availability: "{{ not is_state('sensor.sungrow_inverter_power_flow_status', 'unavailable') }}"
+        state: "{{ states('sensor.sungrow_inverter_power_flow_status')|int(default=0)|bitwise_and(0x10) > 0 }}"
+        icon: >
+          {% if is_state("binary_sensor.sungrow_inverter_exporting_power", "on") %}
+            mdi:transmission-tower
+          {% else %}
+            mdi:transmission-tower-off
+          {% endif %}
+
+      - name: Sungrow Inverter Importing power
+        availability: "{{ not is_state('sensor.sungrow_inverter_power_flow_status', 'unavailable') }}"
+        state: "{{ states('sensor.sungrow_inverter_power_flow_status')|int(default=0)|bitwise_and(0x20) > 0 }}"
+        icon: >
+          {% if is_state("binary_sensor.sungrow_inverter_importing_power", "on") %}
+            mdi:transmission-tower
+          {% else %}
+            mdi:transmission-tower-off
+          {% endif %}
+
+  - sensor:
+      - name: Sungrow Inverter MPPT1 power
+        <<: [*power, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_mppt1_voltage', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_mppt1_current', 'unavailable')
+          }}
+        state: "{{ (states('sensor.sungrow_inverter_mppt1_voltage') | float * states('sensor.sungrow_inverter_mppt1_current') | float) |int }}"
+
+      - name: Sungrow Inverter MPPT2 power
+        <<: [*power, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_mppt2_voltage', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_mppt2_current', 'unavailable' )
+          }}
+        state: "{{ (states('sensor.sungrow_inverter_mppt2_voltage') | float * states('sensor.sungrow_inverter_mppt2_current') | float) |int }}"
+
+      - name: Sungrow Inverter Phase A power
+        <<: [*power, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_phase_a_voltage', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_phase_a_current', 'unavailable')
+          }}
+        state: "{{ (states('sensor.sungrow_inverter_phase_a_voltage') | float * states('sensor.sungrow_inverter_phase_a_current') | float) |int }}"
+
+      - name: Sungrow Inverter Phase B power
+        <<: [*power, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_phase_b_voltage', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_phase_b_current', 'unavailable')
+          }}
+        state: "{{ (states('sensor.sungrow_inverter_phase_b_voltage') | float * states('sensor.sungrow_inverter_phase_b_current') | float) |int }}"
+
+      - name: Sungrow Inverter Phase C power
+        <<: [*power, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_phase_c_voltage', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_phase_c_current', 'unavailable')
+          }}
+        state: "{{ (states('sensor.sungrow_inverter_phase_c_voltage') | float * states('sensor.sungrow_inverter_phase_c_current') | float) |int }}"
+
+      - name: Sungrow Inverter Meter active power
+        <<: [*power, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_meter_active_power_raw', 'unavailable')
+          and states('sensor.sungrow_inverter_meter_active_power_raw')|int != 0x7FFFFFFF
+          }}
+        state: "{{ states('sensor.sungrow_inverter_meter_active_power_raw') }}"
+
+      - name: Sungrow Inverter Meter Phase A active power
+        <<: [*power, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_meter_phase_a_active_power_raw', 'unavailable')
+          and states('sensor.sungrow_inverter_meter_phase_a_active_power_raw')|int != 0x7FFFFFFF
+          }}
+        state: "{{ states('sensor.sungrow_inverter_meter_phase_a_active_power_raw') }}"
+
+      - name: Sungrow Inverter Meter Phase B active power
+        <<: [*power, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_meter_phase_b_active_power_raw', 'unavailable')
+          and states('sensor.sungrow_inverter_meter_phase_b_active_power_raw')|int != 0x7FFFFFFF
+          }}
+        state: "{{ states('sensor.sungrow_inverter_meter_phase_b_active_power_raw') }}"
+
+      - name: Sungrow Inverter Meter Phase C active power
+        <<: [*power, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_meter_phase_c_active_power_raw', 'unavailable')
+          and states('sensor.sungrow_inverter_meter_phase_c_active_power_raw')|int != 0x7FFFFFFF
+          }}
+        state: "{{ states('sensor.sungrow_inverter_meter_phase_c_active_power_raw') }}"
+
+      - name: Sungrow Inverter state
+        device_class: enum
+        availability: "{{ not is_state('sensor.sungrow_inverter_system_state', 'unavailable') }}"
+        state: >-
+          {% set state_value = states('sensor.sungrow_inverter_system_state') | int(default=0) %}
+          {% if state_value in [0x1500,0x0004] %}
+            Emergency Stop
+          {% elif state_value in [0x0001,0x8000] %}
+            Stop
+          {% elif state_value in [0x0002,0x1300] %}
+            Shutdown
+          {% elif state_value in [0x0008,0x1400] %}
+            Standby
+          {% elif state_value in [0x0010,0x1200] %}
+            Initial Standby
+          {% elif state_value in [0x0020,0x1600] %}
+            Startup
+          {% elif state_value in [0x0000,0x0040] %}
+            Running
+          {% elif state_value in [0x0100,0x55000] %}
+            Fault
+          {% elif state_value == 0x0400 %}
+            Maintain mode
+          {% elif state_value == 0x0800 %}
+            Forced mode
+          {% elif state_value == 0x1000 %}
+            Off-grid mode
+          {% elif state_value == 0x0041 %}
+            Off-grid charge
+          {% elif state_value == 0x2501 %}
+            Restarting
+          {% elif state_value == 0x4000 %}
+            External EMS mode
+          {% elif state_value == 0x0200 %}
+            Update failed
+          {% elif state_value == 0x1111 %}
+            Uninitialized
+          {% elif state_value == 0x1700 %}
+            AFCI self-test shutdown
+          {% elif state_value == 0x1800 %}
+            Intelligent Station Building Status
+          {% elif state_value == 0x1900 %}
+            Safe Mode
+          {% elif state_value == 0x2000 %}
+            Open loop
+          {% elif state_value == 0x4001 %}
+            Emergency Charging Operation
+          {% elif state_value == 0x8100 %}
+            Derating Running
+          {% elif state_value == 0x8200 %}
+            Dispatch Running
+          {% elif state_value == 0x9100 %}
+            Warn Run
+          {% else %}
+            Unknown - should not see me!
+          {% endif %}
+
+      - name: Sungrow Inverter Device type
+        availability: "{{ not is_state('sensor.sungrow_inverter_device_type_code', 'unavailable') }}"
+        device_class: enum
+        state: >-
+          {% set device_type_code = states('sensor.sungrow_inverter_device_type_code') | int(default=0) %}
+          {% if device_type_code  == 0x0D06 %}
+            SH3K6
+          {% elif device_type_code == 0x0D07 %}
+            SH4K6
+          {% elif device_type_code == 0x0D09 %}
+            SH5K-20
+          {% elif device_type_code == 0x0D03 %}
+            SH5K-V13
+          {% elif device_type_code == 0x0D0A %}
+            SH3K6-30
+          {% elif device_type_code == 0x0D0B %}
+            SH4K6-30
+          {% elif device_type_code == 0x0D0C %}
+            SH5K-30
+          {% elif device_type_code == 0x0D17 %}
+            SH3.RS
+          {% elif device_type_code == 0x0D0D %}
+            SH3.6RS
+          {% elif device_type_code == 0x0D18 %}
+            SH4.0RS
+          {% elif device_type_code == 0x0D0F %}
+            SH5.0RS
+          {% elif device_type_code == 0x0D10 %}
+            SH6.0RS
+          {% elif device_type_code == 0x0D1A %}
+            SH8.0RS
+          {% elif device_type_code == 0x0D1B %}
+            SH10RS
+          {% elif device_type_code == 0x0E00 %}
+            SH5.0RT
+          {% elif device_type_code == 0x0E01 %}
+            SH6.0RT
+          {% elif device_type_code == 0x0E02 %}
+            SH8.0RT
+          {% elif device_type_code == 0x0E03 %}
+            SH10RT
+          {% elif device_type_code == 0x0E10 %}
+            SH5.0RT-20
+          {% elif device_type_code == 0x0E11 %}
+            SH6.0RT-20
+          {% elif device_type_code == 0x0E12 %}
+            SH8.0RT-20
+          {% elif device_type_code == 0x0E13 %}
+            SH10RT-20
+          {% elif device_type_code == 0x0E0C %}
+            SH5.0RT-V112
+          {% elif device_type_code == 0x0E0D %}
+            SH6.0RT-V112
+          {% elif device_type_code == 0x0E0E %}
+            SH8.0RT-V112
+          {% elif device_type_code == 0x0E0F %}
+            SH10RT-V112
+          {% elif device_type_code == 0x0E08 %}
+            SH5.0RT-V122
+          {% elif device_type_code == 0x0E09 %}
+            SH6.0RT-V122
+          {% elif device_type_code == 0x0E0A %}
+            SH8.0RT-V122
+          {% elif device_type_code == 0x0E0B %}
+            SH10RT-V122
+          {% elif device_type_code == 0x0D0E %}
+            SH4.6RS
+          {% else %}
+            Unknown device code!
+          {% endif %}
+
+      - name: Sungrow Inverter Battery forced charge/discharge mode
+        availability: "{{ not is_state('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw', 'unavailable') }}"
+        device_class: enum
+        state: >-
+          {% if ((states('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw') | int(default=0)) == 0x00AA) %}
+            Forced charge
+          {% elif ((states('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw') | int(default=0))  == 0x00BB) %}
+            Forced discharge
+          {% elif ((states('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw') | int(default=0))  == 0x00CC) %}
+            Stop (default)
+          {% else %}
+            Unknown - should not see me!
+          {% endif %}
+
+      - name: Sungrow Inverter Export power limit mode
+        availability: "{{ not is_state('sensor.sungrow_inverter_export_power_limit_mode_raw', 'unavailable') }}"
+        device_class: enum
+        state: >-
+          {% if ((states('sensor.sungrow_inverter_export_power_limit_mode_raw') | int(default=0)) == 0x00AA) %}
+            Enabled
+          {% elif ((states('sensor.sungrow_inverter_export_power_limit_mode_raw') | int(default=0))  == 0x0055) %}
+            Disabled
+          {% else %}
+            Unknown - should not see me!
+          {% endif %}
+
+      - name: Sungrow Inverter EMS mode
+        availability: "{{ not is_state('sensor.sungrow_inverter_ems_mode_raw', 'unavailable') }}"
+        device_class: enum
+        state: >-
+          {% if ((states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0)) == 0) %}
+            Self-consumption mode (default)
+          {% elif ((states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0)) == 2) %}
+            Forced mode
+          {% elif ((states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0)) == 3) %}
+            External EMS mode
+          {% elif ((states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0)) == 4) %}
+            VPP
+          {% elif ((states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0)) == 8) %}
+            MicroGrid
+          {% else %}
+            Unknown - should not see me!
+          {% endif %}
+
+      - name: Sungrow Inverter Battery charge power
+        <<: [*power, *measurement]
+        availability: "{{ not is_state('sensor.sungrow_inverter_battery_power', 'unavailable') }}"
+        state: >-
+          {% if states('sensor.sungrow_inverter_battery_power')|int < 0 %}
+            {{ states('sensor.sungrow_inverter_battery_power')|int *-1 }}
+          {% else %}
+            0
+          {% endif %}
+
+      - name: Sungrow Inverter Battery discharge power
+        <<: [*power, *measurement]
+        availability: "{{ not is_state('sensor.sungrow_inverter_battery_power', 'unavailable') }}"
+        state: >-
+          {% if states('sensor.sungrow_inverter_battery_power')|int > 0 %}
+            {{ states('sensor.sungrow_inverter_battery_power')|int }}
+          {% else %}
+            0
+          {% endif %}
+
+      - name: Sungrow Inverter Import power
+        <<: [*power, *measurement]
+        availability: "{{ not is_state('sensor.sungrow_inverter_import_export_power', 'unavailable') }}"
+        state: >-
+          {% if states('sensor.sungrow_inverter_import_export_power')|int < 0 %}
+            {{ states('sensor.sungrow_inverter_import_export_power')|int *-1 }}
+          {% else %}
+            0
+          {% endif %}
+
+      - name: Sungrow Inverter Export power
+        <<: [*power, *measurement]
+        availability: "{{ not is_state('sensor.sungrow_inverter_import_export_power', 'unavailable') }}"
+        state: >-
+          {% if states('sensor.sungrow_inverter_import_export_power')|int > 0 %}
+            {{ states('sensor.sungrow_inverter_import_export_power')|int }}
+          {% else %}
+            0
+          {% endif %}
+
+      - name: "Sungrow Inverter Monthly PV generation (current)"
+        <<: [*energy, *total_increasing]
+        availability: >-
+          {% set sensor_name = 'sungrow_inverter_monthly_pv_generation_' ~ now().timestamp() | timestamp_custom('%B') | lower %}
+          {{ states('sensor.' ~ sensor_name)|is_number }}
+        state: >
+          {% set sensor_name = 'sungrow_inverter_monthly_pv_generation_' ~ now().timestamp() | timestamp_custom('%B') | lower %}
+          {{ states('sensor.' ~ sensor_name) }}
+
+      - name: "Sungrow Inverter Yearly PV generation (current)"
+        <<: [*energy, *total_increasing]
+        availability: >-
+          {% set sensor_name = 'sungrow_inverter_yearly_pv_generation_' ~ now().year %}
+          {{ states('sensor.' ~ sensor_name)|is_number }}
+        state: >
+          {% set sensor_name = 'sungrow_inverter_yearly_pv_generation_' ~ now().year %}
+          {{ states('sensor.' ~ sensor_name) }}
+
+      - name: "Sungrow Inverter Monthly export (current)"
+        <<: [*energy, *total_increasing]
+        availability: >-
+          {% set sensor_name = 'sungrow_inverter_monthly_export_' ~ now().timestamp() | timestamp_custom('%B') | lower %}
+          {{ states('sensor.' ~ sensor_name)|is_number }}
+        state: >
+          {% set sensor_name = 'sungrow_inverter_monthly_export_' ~ now().timestamp() | timestamp_custom('%B') | lower %}
+          {{ states('sensor.' ~ sensor_name) }}
+
+      - name: "Sungrow Inverter Yearly export (current)"
+        <<: [*energy, *total_increasing]
+        availability: >-
+          {% set sensor_name = 'sungrow_inverter_yearly_export_' ~ now().year %}
+          {{ states('sensor.' ~ sensor_name)|is_number }}
+        state: >
+          {% set sensor_name = 'sungrow_inverter_yearly_export_' ~ now().year %}
+          {{ states('sensor.' ~ sensor_name) }}
+
+      - name: "Sungrow Inverter Battery level (nominal)"
+        <<: [*battery, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_battery_level', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_battery_minimum_soc', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_battery_maximum_soc', 'unavailable')
+          }}
+        state: >-
+          {% set soc_current = states('sensor.sungrow_inverter_battery_level') | float %}
+          {% set soc_min = states('sensor.sungrow_inverter_battery_minimum_soc') | float %}
+          {% set soc_max = states('sensor.sungrow_inverter_battery_maximum_soc') | float %}
+          {{
+            ((soc_min) + ((soc_max - soc_min) * (soc_current / 100))) | round(1)
+          }}
+
+      - name: "Sungrow Inverter Battery charge (nominal)"
+        <<: [*energy_storage, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_battery_capacity', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_battery_level_nominal', 'unavailable')
+          }}
+        state: >-
+          {{
+            ( states('sensor.sungrow_inverter_battery_capacity') | float *
+            states('sensor.sungrow_inverter_battery_level_nominal') | float / 100 )| round(1)
+          }}
+
+      - name: "Sungrow Inverter Battery charge"
+        <<: [*energy_storage, *measurement]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_battery_capacity', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_battery_level', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_battery_minimum_soc', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_battery_maximum_soc', 'unavailable')
+          }}
+        state: >-
+          {{
+            ( states('sensor.sungrow_inverter_battery_capacity')|float
+            * ( states('sensor.sungrow_inverter_battery_maximum_soc')|float - states('sensor.sungrow_inverter_battery_minimum_soc')|float ) /100
+            * ( states('sensor.sungrow_inverter_battery_level')|float ) /100
+            ) |round(2)
+          }}
+
+      - name: "Sungrow Inverter Daily consumed energy"
+        <<: [*energy, *total_increasing]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_daily_pv_generation', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_daily_exported_energy', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_daily_imported_energy', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_daily_battery_charge', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_daily_battery_discharge', 'unavailable')
+          }}
+        state: >-
+          {% set value =
+            (
+              states('sensor.sungrow_inverter_daily_pv_generation')|float
+              - states('sensor.sungrow_inverter_daily_exported_energy')|float
+              + states('sensor.sungrow_inverter_daily_imported_energy')|float
+              - states('sensor.sungrow_inverter_daily_battery_charge')|float
+              + states('sensor.sungrow_inverter_daily_battery_discharge')|float
+            )|int
+          %}
+          {% if value >= 0 %}
+            {{ value }}
+          {% else %}
+            0
+          {% endif %}
+
+      - name: "Sungrow Inverter Total consumed energy"
+        <<: [*energy, *total]
+        availability: >-
+          {{
+          not is_state('sensor.sungrow_inverter_total_pv_generation', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_total_exported_energy', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_total_imported_energy', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_total_battery_charge', 'unavailable')
+          and not is_state('sensor.sungrow_inverter_total_battery_discharge', 'unavailable')
+          }}
+        state: >-
+          {{
+            (
+              states('sensor.sungrow_inverter_total_pv_generation')|float
+              - states('sensor.sungrow_inverter_total_exported_energy')|float
+              + states('sensor.sungrow_inverter_total_imported_energy')|float
+              - states('sensor.sungrow_inverter_total_battery_charge')|float
+              + states('sensor.sungrow_inverter_total_battery_discharge')|float
+            )|int
+          }}
+
+input_number:
+  sungrow_inverter_set_battery_maximum_soc:
+    name: Sungrow Inverter Set Battery maximum SoC
+    unit_of_measurement: "%"
+    min: 50
+    max: 100
+    step: 1
+
+  sungrow_inverter_set_battery_minimum_soc:
+    name: Sungrow Inverter Set Battery minimum SoC
+    unit_of_measurement: "%"
+    min: 0
+    max: 50
+    step: 1
+
+  sungrow_inverter_set_battery_backup_soc:
+    name: Sungrow Inverter Set Battery backup SoC
+    unit_of_measurement: "%"
+    min: 0
+    max: 100
+    step: 1
+
+  sungrow_inverter_set_battery_forced_charge_discharge_power:
+    name: Sungrow Inverter Set Battery forced charge/discharge power
+    unit_of_measurement: W
+    min: 0
+    max: 10000 # BDC rated Power (RO register 5628)
+    step: 1
+
+  sungrow_inverter_set_battery_maximum_charge_power:
+    name: Sungrow Inverter Set Battery maximum charge power
+    unit_of_measurement: W
+    min: 10
+    max: 10600
+    step: 10
+
+  sungrow_inverter_set_battery_maximum_discharge_power:
+    name: Sungrow Inverter Set Battery maximum discharge power
+    unit_of_measurement: W
+    min: 10
+    max: 10600
+    step: 10
+
+  sungrow_inverter_set_export_power_limit:
+    name: Sungrow Inverter Set Export power limit
+    unit_of_measurement: W
+    min: 0
+    max: 15120
+    step: 1
+
+input_select:
+  # consider change to two input buttons for start and stop
+  sungrow_inverter_set_start_stop:
+    name: Sungrow Inverter Set Start/Stop
+    options:
+      - "Start"
+      - "Stop"
+
+  sungrow_inverter_set_ems_mode:
+    name: Sungrow Inverter Set EMS mode
+    options:
+      - "Self-consumption mode (default)"
+      - "Forced mode"
+      - "External EMS mode"
+      - "VPP"
+
+  sungrow_inverter_set_battery_forced_charge_discharge_mode:
+    name: Sungrow Inverter Set Battery forced charge/discharge mode
+    icon: mdi:battery-charging
+    options:
+      - "Stop (default)"
+      - "Forced charge"
+      - "Forced discharge"
+
+  sungrow_inverter_set_export_power_limit_mode:
+    name: Sungrow Inverter Set Export power limit mode
+    icon: mdi:export
+    options:
+      - "Enabled"
+      - "Disabled"
+
+automation:
+  - id: "sungrow_inverter_update_system_state"
+    alias: "Sungrow Inverter Update system state"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_select.sungrow_inverter_set_start_stop
+    condition: []
+    variables:
+      start: 0xCF
+      stop: 0xCE
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 12999 # reg 13000
+          value: >
+            {% if is_state('input_select.sungrow_inverter_set_start_stop', 'Start') %}
+              {{start}}
+            {% else %}
+              {{stop}}
+            {% endif %}
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_system_state
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_maximum_soc"
+    alias: "Sungrow Inverter Update Battery maximum SoC"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.sungrow_inverter_set_battery_maximum_soc
+    condition: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 13057 # reg 13058
+          value: "{{ states('input_number.sungrow_inverter_set_battery_maximum_soc') | int *10}}"
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_battery_maximum_soc
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_maximum_soc_input_number"
+    alias: "Sungrow Inverter Update Battery maximum SoC input number"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.sungrow_inverter_battery_maximum_soc
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_maximum_soc', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.sungrow_inverter_set_battery_maximum_soc
+        data:
+          value: "{{ states('sensor.sungrow_inverter_battery_maximum_soc') }}"
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_minimum_soc"
+    alias: "Sungrow Inverter Update Battery minimum SoC"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.sungrow_inverter_set_battery_minimum_soc
+    condition: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 13058 # reg 13059
+          value: "{{ states('input_number.sungrow_inverter_set_battery_minimum_soc') | int *10}}"
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_battery_minimum_soc
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_minimum_soc_input_number"
+    alias: "Sungrow Inverter Update Battery minimum SoC input number"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.sungrow_inverter_battery_minimum_soc
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_minimum_soc', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.sungrow_inverter_set_battery_minimum_soc
+        data:
+          value: "{{ states('sensor.sungrow_inverter_battery_minimum_soc') }}"
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_backup_soc"
+    alias: "Sungrow Inverter Update Battery backup SoC"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.sungrow_inverter_set_battery_backup_soc
+    condition: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 13099 # reg 13100
+          value: "{{ states('input_number.sungrow_inverter_set_battery_backup_soc') | int}}"
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_battery_backup_soc
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_backup_soc_input_number"
+    alias: "Sungrow Inverter Update Battery backup SoC input number"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.sungrow_inverter_battery_backup_soc
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_backup_soc', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.sungrow_inverter_set_battery_backup_soc
+        data:
+          value: "{{ states('sensor.sungrow_inverter_battery_backup_soc') }}"
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_forced_charge_discharge_mode"
+    alias: "Sungrow Inverter Update Battery forced charge/discharge mode"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode
+    condition: []
+    variables:
+      stop_default: 0x00CC
+      forced_charge: 0x00AA
+      forced_discharge: 0x00BB
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 13050 # reg 13051
+          value: >-
+            {% if is_state('input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode', "Stop (default)") %}
+              {{stop_default}}
+            {% elif is_state('input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode', "Forced charge") %}
+              {{forced_charge}}
+            {% elif is_state('input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode', "Forced discharge") %}
+              {{forced_discharge}}
+            {% else %}
+              {{stop_default}}
+            {% endif %}
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_forced_charge_discharge_mode_input_select"
+    alias: "Sungrow Inverter Update Battery forced charge/discharge mode input select"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw', 'unavailable') }}"
+    actions:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode
+        data:
+          option: "{{ states('sensor.sungrow_inverter_battery_forced_charge_discharge_mode') }}"
+    mode: single
+
+  - id: "sungrow_inverter_update_ems_mode"
+    alias: "Sungrow Inverter Update EMS mode"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_select.sungrow_inverter_set_ems_mode
+    condition: []
+    variables:
+      self_consumtion_mode: 0
+      forced_mode: 2
+      external_ems_mode: 3
+      vpp: 4
+      microgrid: 8
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 13049 # reg 13050
+          value: >
+            {% if is_state('input_select.sungrow_inverter_set_ems_mode', "Self-consumption mode (default)") %}
+              {{self_consumtion_mode}}
+            {% elif is_state('input_select.sungrow_inverter_set_ems_mode', "Forced mode") %}
+              {{forced_mode}}
+            {% elif is_state('input_select.sungrow_inverter_set_ems_mode', "External EMS mode") %}
+              {{external_ems_mode}}
+            {% elif is_state('input_select.sungrow_inverter_set_ems_mode', "VPP") %}
+              {{vpp}}
+            {% elif is_state('input_select.sungrow_inverter_set_ems_mode', "MicroGrid") %}
+              {{microgrid}}
+            {% else %}
+              {{self_consumtion_mode}}
+            {% endif %}
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_ems_mode_raw
+    mode: single
+
+  - id: "sungrow_inverter_update_ems_mode_input_select"
+    alias: "Sungrow Inverter Update EMS mode input select"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.sungrow_inverter_ems_mode_raw
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.sungrow_inverter_ems_mode_raw', 'unavailable') }}"
+    actions:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.sungrow_inverter_set_ems_mode
+        data:
+          option: "{{ states('sensor.sungrow_inverter_ems_mode') }}"
+    mode: single
+
+  - id: "sungrow_inverter_update_export_power_limit_mode"
+    alias: "Sungrow Inverter Update Export power limit mode"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_select.sungrow_inverter_set_export_power_limit_mode
+    condition: []
+    variables:
+      export_limit_enable: 0xAA
+      export_limit_disable: 0x55
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 13086 # reg 13087
+          value: >
+            {% if is_state('input_select.sungrow_inverter_set_export_power_limit_mode', "Enabled") %}
+              {{export_limit_enable}}
+            {% elif is_state('input_select.sungrow_inverter_set_export_power_limit_mode', "Disabled") %}
+              {{export_limit_disable}}
+            {% else %}
+              {{export_limit_disable}}
+            {% endif %}
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_export_power_limit_mode_raw
+    mode: single
+
+  - id: "sungrow_inverter_update_export_power_limit_mode_input_select"
+    alias: "Sungrow Inverter Update Export power limit mode input select"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.sungrow_inverter_export_power_limit_mode_raw
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.sungrow_inverter_export_power_limit_mode_raw', 'unavailable') }}"
+    actions:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.sungrow_inverter_set_export_power_limit_mode
+        data:
+          option: "{{ states('sensor.sungrow_inverter_export_power_limit_mode') }}"
+    mode: single
+
+  - id: "sungrow_inverter_update_export_power_limit"
+    alias: "Sungrow Inverter Update Export power limit"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.sungrow_inverter_set_export_power_limit
+    condition: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 13073 # reg 13074
+          value: "{{ states('input_number.sungrow_inverter_set_export_power_limit') }}"
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_export_power_limit
+    mode: single
+
+  - id: "sungrow_inverter_update_export_power_limit_input_number"
+    alias: "Sungrow Inverter Update Export power limit input number"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.sungrow_inverter_export_power_limit
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.sungrow_inverter_export_power_limit', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.sungrow_inverter_set_export_power_limit
+        data:
+          value: "{{ states('sensor.sungrow_inverter_export_power_limit') }}"
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_forced_charge_discharge_power"
+    alias: "Sungrow Inverter Update Battery forced charge/discharge power"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.sungrow_inverter_set_battery_forced_charge_discharge_power
+    condition: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 13051 # reg 13052
+          value: "{{ states('input_number.sungrow_inverter_set_battery_forced_charge_discharge_power') | int}}"
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_battery_forced_charge_discharge_power
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_forced_charge_discharge_power_input_number"
+    alias: "Sungrow Inverter Update Battery forced charge/discharge power input number"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.sungrow_inverter_battery_forced_charge_discharge_power
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_forced_charge_discharge_power', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.sungrow_inverter_set_battery_forced_charge_discharge_power
+        data:
+          value: "{{ states('sensor.sungrow_inverter_battery_forced_charge_discharge_power') }}"
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_maximum_charge_power"
+    alias: "Sungrow Inverter Update Battery maximum charge power"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.sungrow_inverter_set_battery_maximum_charge_power
+    condition: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 33046 # reg 33047
+          value: "{{ states('input_number.sungrow_inverter_set_battery_maximum_charge_power') |float /10 |int}}"
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_battery_maximum_charge_power
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_maximum_charge_power_input_number"
+    alias: "Sungrow Inverter Update Battery maximum charge power input number"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.sungrow_inverter_battery_maximum_charge_power
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_maximum_charge_power', 'unavailable') }}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.sungrow_inverter_set_battery_maximum_charge_power
+        data:
+          value: "{{ states('sensor.sungrow_inverter_battery_maximum_charge_power') }}"
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_maximum_discharge_power"
+    alias: "Sungrow Inverter Update Battery maximum discharge power"
+    triggers:
+      - trigger: state
+        entity_id:
+          - input_number.sungrow_inverter_set_battery_maximum_discharge_power
+    condition: []
+    actions:
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowInverter
+          slave: !secret sungrow_modbus_slave
+          address: 33047 # reg 33048
+          value: "{{ states('input_number.sungrow_inverter_set_battery_maximum_discharge_power')  |float /10 |int}}"
+      - action: homeassistant.update_entity
+        data: {}
+        target:
+          entity_id: sensor.sungrow_inverter_battery_maximum_discharge_power
+    mode: single
+
+  - id: "sungrow_inverter_update_battery_maximum_discharge_power_input_number"
+    alias: "Sungrow Inverter Update Battery maximum discharge power input number"
+    triggers:
+      - trigger: state
+        entity_id:
+          - sensor.sungrow_inverter_battery_maximum_discharge_power
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_maximum_discharge_power', 'unavailable')}}"
+    actions:
+      - action: input_number.set_value
+        target:
+          entity_id: input_number.sungrow_inverter_set_battery_maximum_discharge_power
+        data:
+          value: "{{ states('sensor.sungrow_inverter_battery_maximum_discharge_power') }}"
+    mode: single

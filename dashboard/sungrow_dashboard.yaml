@@ -1,0 +1,823 @@
+views:
+  - title: Overview
+    icon: mdi:sun-compass
+    cards:
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_total_dc_power
+            name: Total DC power
+          - entity: sensor.sungrow_inverter_load_power
+            name: Load power
+          - entity: sensor.sungrow_inverter_export_power
+            name: Export power
+          - entity: sensor.sungrow_inverter_import_power
+            name: Import power
+          - entity: sensor.sungrow_inverter_battery_charge_power
+            name: Battery charge power
+          - entity: sensor.sungrow_inverter_battery_discharge_power
+            name: Battery discharge power
+        title: Power
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_daily_pv_generation
+            name: Daily PV generation
+          - entity: sensor.sungrow_inverter_daily_consumed_energy
+            name: Daily consumed energy
+          - entity: sensor.sungrow_inverter_daily_imported_energy
+            name: Daily imported energy
+          - entity: sensor.sungrow_inverter_daily_exported_energy
+            name: Daily exported energy
+          - entity: sensor.sungrow_inverter_total_consumed_energy
+            name: Total consumed energy
+        title: Energy
+      - type: gauge
+        entity: sensor.sungrow_inverter_battery_level
+        min: 0
+        max: 100
+        severity:
+          green: 70
+          yellow: 40
+          red: 20
+      - type: gauge
+        entity: sensor.sungrow_inverter_battery_level_nominal
+        min: 0
+        max: 100
+        severity:
+          green: 70
+          yellow: 40
+          red: 20
+      - show_name: true
+        show_icon: true
+        show_state: true
+        type: glance
+        entities:
+          - entity: binary_sensor.sungrow_inverter_battery_charging
+            name: Charging
+          - entity: binary_sensor.sungrow_inverter_battery_discharging
+            name: Discharging
+          - entity: sun.sun
+          - entity: binary_sensor.sungrow_inverter_exporting_power
+            name: Exporting
+          - entity: binary_sensor.sungrow_inverter_importing_power
+            name: Importing
+          - entity: binary_sensor.sungrow_inverter_pv_generating
+            name: PV generating
+        title: Status
+        columns: 3
+        state_color: true
+      - chart_type: line
+        period: 5minute
+        days_to_show: 1
+        type: statistics-graph
+        entities:
+          - sensor.sungrow_inverter_total_dc_power
+          - sensor.sungrow_inverter_load_power
+          - sensor.sungrow_inverter_export_power
+          - sensor.sungrow_inverter_import_power
+          - sensor.sungrow_inverter_battery_charge_power
+          - sensor.sungrow_inverter_battery_discharge_power
+          - sensor.sungrow_wallbox_charging_power
+        stat_types:
+          - mean
+        title: Power distribution last 24 hours
+        hide_legend: true
+        logarithmic_scale: false
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_battery_level
+            name: Battery level
+          - entity: sensor.sungrow_inverter_battery_level_nominal
+            name: Battery level nominal
+          - entity: sensor.sungrow_inverter_battery_charge
+            name: Battery charge
+          - entity: sensor.sungrow_inverter_battery_charge_nominal
+            name: Battery charge nominal
+          - entity: sensor.sungrow_inverter_daily_battery_charge
+            name: Daily battery charge
+          - entity: sensor.sungrow_inverter_daily_battery_discharge
+            name: Daily battery discharge
+        title: Battery
+      - type: custom:power-flow-card-plus
+        entities:
+          battery:
+            entity:
+              '0': s
+              '1': e
+              '2': 'n'
+              '3': s
+              '4': o
+              '5': r
+              '6': .
+              '7': s
+              '8': u
+              '9': 'n'
+              '10': g
+              '11': r
+              '12': o
+              '13': w
+              '14': _
+              '15': i
+              '16': 'n'
+              '17': v
+              '18': e
+              '19': r
+              '20': t
+              '21': e
+              '22': r
+              '23': _
+              '24': b
+              '25': a
+              '26': t
+              '27': t
+              '28': e
+              '29': r
+              '30': 'y'
+              '31': _
+              '32': c
+              '33': h
+              '34': a
+              '35': r
+              '36': g
+              '37': e
+              '38': _
+              '39': p
+              '40': o
+              '41': w
+              '42': e
+              '43': r
+              consumption: sensor.sungrow_inverter_battery_discharge_power
+              production: sensor.sungrow_inverter_battery_charge_power
+            state_of_charge: sensor.sungrow_inverter_battery_level
+            state_of_charge_unit_white_space: false
+          grid:
+            entity:
+              '0': s
+              '1': e
+              '2': 'n'
+              '3': s
+              '4': o
+              '5': r
+              '6': .
+              '7': s
+              '8': u
+              '9': 'n'
+              '10': g
+              '11': r
+              '12': o
+              '13': w
+              '14': _
+              '15': i
+              '16': 'n'
+              '17': v
+              '18': e
+              '19': r
+              '20': t
+              '21': e
+              '22': r
+              '23': _
+              '24': m
+              '25': e
+              '26': t
+              '27': e
+              '28': r
+              '29': _
+              '30': a
+              '31': c
+              '32': t
+              '33': i
+              '34': v
+              '35': e
+              '36': _
+              '37': p
+              '38': o
+              '39': w
+              '40': e
+              '41': r
+              consumption: sensor.sungrow_inverter_import_power
+              production: sensor.sungrow_inverter_export_power
+          solar:
+            entity: sensor.sungrow_inverter_total_dc_power
+            display_zero_state: true
+          fossil_fuel_percentage: {}
+          home:
+            entity: sensor.sungrow_inverter_load_power
+          individual:
+            - entity: sensor.sungrow_wallbox_charging_power
+              name: Wallbox
+              icon: mdi:ev-station
+              display_zero: true
+              display_zero_state: true
+              unit_white_space: true
+              show_direction: false
+        clickable_entities: true
+        display_zero_lines:
+          mode: show
+          transparency: 50
+          grey_color:
+            - 189
+            - 189
+            - 189
+        use_new_flow_rate_model: true
+        w_decimals: 0
+        kw_decimals: 1
+        min_flow_rate: 0.75
+        min_expected_power: 0.01
+        watt_threshold: 10000
+        transparency_zero_lines: 0
+        title: Power flow
+        max_expected_power: 10000
+        max_flow_rate: 5
+  - title: Detailed Info
+    icon: mdi:solar-power-variant-outline
+    cards:
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_load_power
+            name: Load power
+          - entity: sensor.sungrow_inverter_phase_a_power
+            name: Phase A power
+          - entity: sensor.sungrow_inverter_phase_b_power
+            name: Phase B power
+          - entity: sensor.sungrow_inverter_phase_c_power
+            name: Phase C power
+          - entity: sensor.sungrow_inverter_meter_phase_a_active_power
+            name: Meter phase A active power
+          - entity: sensor.sungrow_inverter_meter_phase_b_active_power
+            name: Meter phase B active power
+          - entity: sensor.sungrow_inverter_meter_phase_c_active_power
+            name: Meter phase C active power
+          - entity: sensor.sungrow_inverter_total_backup_power
+            name: Total backup power
+          - entity: sensor.sungrow_inverter_backup_phase_a_power
+            name: Backup phase A power
+          - entity: sensor.sungrow_inverter_backup_phase_b_power
+            name: Backup phase B power
+          - entity: sensor.sungrow_inverter_backup_phase_c_power
+            name: Backup phase C power
+          - entity: sensor.sungrow_inverter_grid_frequency
+            name: Grid frequency
+        title: Grid / Load
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_daily_pv_generation
+            name: Daily PV generation
+          - entity: sensor.sungrow_inverter_daily_direct_energy_consumption
+            name: Daily direct energy consumption
+          - entity: sensor.sungrow_inverter_daily_exported_energy_from_pv
+            name: Daily exported energy from pv
+          - entity: sensor.sungrow_inverter_daily_pv_generation_battery_discharge
+            name: Daily PV generation battery discharge
+          - entity: sensor.sungrow_inverter_daily_battery_charge_from_pv
+            name: Daily battery charge from PV
+          - entity: sensor.sungrow_inverter_daily_battery_discharge
+            name: Daily battery discharge
+          - entity: sensor.sungrow_inverter_daily_exported_energy
+            name: Daily exported energy
+          - entity: sensor.sungrow_inverter_daily_battery_charge
+            name: Daily battery charge
+          - entity: sensor.sungrow_inverter_daily_imported_energy
+            name: Daily imported energy
+          - entity: sensor.sungrow_inverter_total_pv_generation
+            name: Total PV generation
+          - entity: sensor.sungrow_inverter_total_direct_energy_consumption
+            name: Total direct energy consumption
+          - entity: sensor.sungrow_inverter_total_pv_generation_battery_discharge
+            name: Total PV generation battery discharge
+          - entity: sensor.sungrow_inverter_total_exported_energy_from_pv
+            name: Total exported energy from PV
+          - entity: sensor.sungrow_inverter_total_battery_charge_from_pv
+            name: Total battery charge from PV
+          - entity: sensor.sungrow_inverter_total_battery_charge
+            name: Total battery charge
+          - entity: sensor.sungrow_inverter_total_battery_discharge
+            name: Total battery discharge
+          - entity: sensor.sungrow_inverter_total_imported_energy
+            name: Total imported energy
+          - entity: sensor.sungrow_inverter_total_exported_energy
+            name: Total exported energy
+        title: Energy
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_total_dc_power
+            name: Total DC power
+          - entity: sensor.sungrow_inverter_mppt1_power
+            name: MPPT1 power
+          - entity: sensor.sungrow_inverter_mppt1_voltage
+            name: MPPT1 voltage
+          - entity: sensor.sungrow_inverter_mppt1_current
+            name: MPPT1 current
+          - entity: sensor.sungrow_inverter_mppt2_power
+            name: MPPT2 power
+          - entity: sensor.sungrow_inverter_mppt2_voltage
+            name: MPPT2 voltage
+          - entity: sensor.sungrow_inverter_mppt2_current
+            name: MPPT2 current
+        title: PV Gen
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_battery_capacity
+            name: Battery capacity
+          - entity: sensor.sungrow_inverter_battery_charge_power
+            name: Battery charge power
+          - entity: sensor.sungrow_inverter_battery_discharge_power
+            name: Battery discharge power
+          - entity: sensor.sungrow_inverter_battery_voltage
+            name: Battery voltage
+          - entity: sensor.sungrow_inverter_battery_current
+            name: Battery current
+          - entity: sensor.sungrow_inverter_battery_level
+            name: Battery level
+          - entity: sensor.sungrow_inverter_battery_health
+            name: Battery health
+          - entity: sensor.sungrow_inverter_battery_temperature
+            name: Battery temperature
+          - entity: sensor.sungrow_inverter_daily_battery_charge_from_pv
+            name: Daily battery charge from PV
+          - entity: sensor.sungrow_inverter_daily_battery_charge
+            name: Daily battery charge
+          - entity: sensor.sungrow_inverter_daily_battery_discharge
+            name: Daily battery discharge
+          - entity: sensor.sungrow_inverter_total_battery_charge_from_pv
+            name: Total battery charge from PV
+          - entity: sensor.sungrow_inverter_total_battery_discharge
+            name: Total battery discharge
+          - entity: sensor.sungrow_inverter_total_battery_charge
+            name: Total battery charge
+          - entity: sensor.sungrow_inverter_battery_maximum_soc
+            name: Battery maximum SoC
+          - entity: sensor.sungrow_inverter_battery_minimum_soc
+            name: Battery minimum SoC
+        title: Battery
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_ems_mode
+            name: EMS mode
+          - entity: sensor.sungrow_inverter_battery_forced_charge_discharge_mode
+            name: Battery forced charge discharge mode
+          - entity: sensor.sungrow_inverter_battery_minimum_soc
+            name: Battery minimum SoC
+          - entity: sensor.sungrow_inverter_battery_maximum_soc
+            name: Battery maximum SoC
+          - entity: sensor.sungrow_inverter_battery_forced_charge_discharge_power
+            name: Battery forced charge discharge power
+          - entity: sensor.sungrow_inverter_bms_maximum_charge_current
+            name: BMS maximum charge current
+          - entity: sensor.sungrow_inverter_bms_maximum_discharge_current
+            name: BMS maximum discharge current
+        title: EMS
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_device_type
+            name: Device type
+          - entity: sensor.sungrow_inverter_serial_number
+            name: Serial number
+          - entity: sensor.sungrow_inverter_state
+            name: State
+          - entity: sensor.sungrow_inverter_system_state
+            name: System state
+          - entity: sensor.sungrow_inverter_power_flow_status
+            name: Power flow status
+          - entity: sensor.sungrow_inverter_temperature
+            name: Temperature
+          - entity: binary_sensor.sungrow_inverter_pv_generating
+            name: PV generating
+          - entity: binary_sensor.sungrow_inverter_battery_charging
+            name: Battery charging
+          - entity: binary_sensor.sungrow_inverter_battery_discharging
+            name: Battery discharging
+          - entity: binary_sensor.sungrow_inverter_exporting_power
+            name: Exporting power
+          - entity: binary_sensor.sungrow_inverter_importing_power
+            name: Importing power
+        title: Inverter State
+      - chart_type: line
+        period: day
+        days_to_show: 60
+        type: statistics-graph
+        entities:
+          - sensor.sungrow_inverter_battery_level
+        stat_types:
+          - min
+          - max
+        title: Battery SoC last 60 days
+      - chart_type: line
+        period: day
+        days_to_show: 180
+        type: statistics-graph
+        entities:
+          - sensor.sungrow_inverter_battery_level
+        stat_types:
+          - min
+          - max
+        title: Battery SoC last 180 days
+  - title: EMS Control
+    icon: mdi:solar-power
+    cards:
+      - type: entities
+        entities:
+          - entity: input_select.sungrow_inverter_set_start_stop
+            name: Start/Stop Sungrow Inverter
+          - entity: sensor.sungrow_inverter_state
+            name: Inverter state
+          - entity: sensor.sungrow_inverter_ems_mode
+            name: EMS
+          - entity: sensor.sungrow_inverter_battery_forced_charge_discharge_mode
+            name: Battery forced charge/discharge
+        title: Inverter State
+      - type: entities
+        entities:
+          - entity: input_select.sungrow_inverter_set_ems_mode
+            name: EMS mode
+          - entity: input_number.sungrow_inverter_set_battery_minimum_soc
+            name: Battery minimum SoC
+          - entity: input_number.sungrow_inverter_set_battery_maximum_soc
+            name: Battery maximum SoC
+          - entity: input_number.sungrow_inverter_set_battery_backup_soc
+            name: Battery backup SoC
+          - entity: >-
+              input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode
+            name: Battery forced charge/discharge mode
+          - entity: >-
+              input_number.sungrow_inverter_set_battery_forced_charge_discharge_power
+            name: Battery Forced charge/discharge power
+          - entity: input_number.sungrow_inverter_set_battery_maximum_charge_power
+            name: Battery maximum charge power
+          - entity: input_number.sungrow_inverter_set_battery_maximum_discharge_power
+            name: Battery maximum discharge power
+        title: EMS & Battery Settings
+        state_color: false
+        show_header_toggle: true
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_battery_capacity
+            name: Battery capacity
+          - entity: sensor.sungrow_inverter_battery_level
+            name: Battery level
+          - entity: sensor.sungrow_inverter_battery_health
+            name: Battery health
+            icon: mdi:battery-heart-variant
+          - entity: sensor.sungrow_inverter_battery_charge_power
+            name: Battery charge power
+          - entity: sensor.sungrow_inverter_battery_discharge_power
+            name: Battery discharge power
+          - entity: sensor.sungrow_inverter_battery_minimum_soc
+            name: Battery minimum SoC
+          - entity: sensor.sungrow_inverter_battery_maximum_soc
+            name: Battery maximum SoC
+          - entity: sensor.sungrow_inverter_battery_backup_soc
+            name: Battery backup SoC
+          - entity: sensor.sungrow_inverter_battery_forced_charge_discharge_power
+            name: Battery forced charge discharge power
+          - entity: sensor.sungrow_inverter_battery_maximum_charge_power
+            name: Battery maximum charge power
+          - entity: sensor.sungrow_inverter_battery_maximum_discharge_power
+            name: Battery maximum discharge power
+          - entity: sensor.sungrow_inverter_battery_level_nominal
+            name: Battery level nominal
+          - entity: sensor.sungrow_inverter_battery_level
+            name: Battery level
+          - entity: sensor.sungrow_inverter_battery_charge
+            name: Battery charge
+          - entity: sensor.sungrow_inverter_battery_charge_nominal
+            name: Battery charge nominal
+        title: Battery Status
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_inverter_export_power_limit_mode
+            name: Export power limit mode
+          - entity: sensor.sungrow_inverter_export_power_limit
+            name: Export power limit
+          - entity: input_select.sungrow_inverter_set_export_power_limit_mode
+            name: Set export power limit mode
+          - entity: input_number.sungrow_inverter_set_export_power_limit
+            name: Set export power limit
+        title: Export Settings
+      - type: entities
+        entities:
+          - entity: automation.sungrow_inverter_update_battery_backup_soc
+            name: Update battery backup SoC
+          - entity: automation.sungrow_inverter_update_system_state
+            name: Update system state
+          - entity: automation.sungrow_inverter_update_battery_maximum_soc
+            name: Update battery maximum SoC
+          - entity: >-
+              automation.sungrow_inverter_update_battery_maximum_soc_input_number
+            name: Update battery maximum SoC input number
+          - entity: automation.sungrow_inverter_update_battery_minimum_soc
+            name: Update battery minimum SoC
+          - entity: >-
+              automation.sungrow_inverter_update_battery_minimum_soc_input_number
+            name: Update battery minimum SoC input number
+          - entity: automation.sungrow_inverter_update_battery_backup_soc
+            name: Update battery backup SoC
+          - entity: automation.sungrow_inverter_update_battery_backup_soc_input_number
+            name: Update battery backup SoC input number
+          - entity: >-
+              automation.sungrow_inverter_update_battery_forced_charge_discharge_mode
+            name: Update battery forced charge discharge mode
+          - entity: >-
+              automation.sungrow_inverter_update_battery_forced_charge_discharge_mode_input_select
+            name: Update battery forced charge discharge mode input select
+          - entity: automation.sungrow_inverter_update_ems_mode
+            name: Update ems mode
+          - entity: automation.sungrow_inverter_update_ems_mode_input_select
+            name: Update ems mode input select
+          - entity: automation.sungrow_inverter_update_export_power_limit_mode
+            name: Update export power limit mode
+          - entity: >-
+              automation.sungrow_inverter_update_export_power_limit_mode_input_select
+            name: Update export power limit mode input select
+          - entity: automation.sungrow_inverter_update_export_power_limit
+            name: Update export power limit
+          - entity: automation.sungrow_inverter_update_export_power_limit_input_number
+            name: Update export power limit input number
+          - entity: >-
+              automation.sungrow_inverter_update_battery_forced_charge_discharge_power
+            name: Update battery forced charge discharge power
+          - entity: >-
+              automation.sungrow_inverter_update_battery_forced_charge_discharge_power_input_number
+            name: Update battery forced charge discharge power input number
+          - entity: automation.sungrow_inverter_update_battery_maximum_charge_power
+            name: Update battery maximum charge power
+          - entity: >-
+              automation.sungrow_inverter_update_battery_maximum_charge_power_input_number
+            name: Update battery maximum charge power input number
+          - entity: automation.sungrow_inverter_update_battery_maximum_discharge_power
+            name: Update battery maximum discharge power
+          - entity: >-
+              automation.sungrow_inverter_update_battery_maximum_discharge_power_input_number
+            name: Update battery maximum discharge power input number
+  - title: Wallbox
+    path: wallbox
+    icon: mdi:ev-station
+    cards:
+      - type: entities
+        entities:
+          - entity: input_select.sungrow_wallbox_set_charger_status
+            name: Charger status
+          - entity: input_number.sungrow_wallbox_set_mileage_per_kwh
+            name: Mileage
+          - entity: input_number.sungrow_wallbox_set_output_current
+            name: Output current
+          - entity: input_select.sungrow_wallbox_set_phase_mode
+            name: 'Phase mode '
+          - entity: input_button.sungrow_wallbox_set_start_charging
+            name: Start charging
+          - entity: input_button.sungrow_wallbox_set_stop_charging
+            name: Stop charging
+          - entity: input_select.sungrow_wallbox_set_charging_mode
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_wallbox_charging_status
+            name: Charging status
+          - entity: sensor.sungrow_wallbox_start_mode
+            name: Start mode
+          - entity: sensor.sungrow_wallbox_phase_status
+            name: Phase status
+          - entity: sensor.sungrow_wallbox_charging_duration
+            name: Charging duration
+          - entity: sensor.sungrow_wallbox_charging_start_time
+            name: Start
+          - entity: sensor.sungrow_wallbox_charging_end_time
+            name: End
+          - entity: sensor.sungrow_wallbox_charging_energy
+            name: Charging energy
+          - entity: sensor.sungrow_wallbox_charging_power
+            name: Charging power
+          - entity: sensor.sungrow_wallbox_charged_range
+            name: Charged range
+          - entity: sensor.sungrow_wallbox_output_current
+            name: Output current
+          - entity: sensor.sungrow_wallbox_phase_a_charging_current
+            name: Phase A charging current
+          - entity: sensor.sungrow_wallbox_phase_a_charging_voltage
+            name: Phase A charging voltage
+          - entity: sensor.sungrow_wallbox_phase_b_charging_current
+            name: Phase B charging current
+          - entity: sensor.sungrow_wallbox_phase_b_charging_voltage
+            name: Phase B charging voltage
+          - entity: sensor.sungrow_wallbox_phase_c_charging_current
+            name: Phase C charging current
+          - entity: sensor.sungrow_wallbox_phase_c_charging_voltage
+            name: Phase C charging voltage
+          - entity: sensor.sungrow_wallbox_power_regulation
+            name: Power regulation
+          - entity: sensor.sungrow_wallbox_control_pilot_voltage
+            name: 'Control Pilot voltage '
+          - entity: sensor.sungrow_wallbox_pwm_duty_cycle
+            name: PWM Duty cycle
+        title: Lade Session
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_wallbox_maximum_charging_power
+            name: Maximum charging power
+          - entity: sensor.sungrow_wallbox_minimum_charging_power
+            name: Minimum charging power
+          - entity: sensor.sungrow_wallbox_phase_mode
+            name: Phase mode
+          - entity: sensor.sungrow_wallbox_charger_status
+            name: Charger status
+          - entity: sensor.sungrow_wallbox_charger_enable_status
+            name: Charger enable status
+          - entity: sensor.sungrow_wallbox_remote_control
+            name: Remote control
+          - entity: sensor.sungrow_wallbox_major_fault_name
+            name: Major fault name
+          - entity: sensor.sungrow_wallbox_mileage_per_kwh
+            name: Mileage
+          - entity: sensor.sungrow_wallbox_total_energy
+            name: Total energy
+          - entity: sensor.sungrow_wallbox_total_energy_cleraing
+            name: Total energy clearing
+        title: Status
+      - type: entities
+        entities:
+          - entity: sensor.sungrow_wallbox_device_type
+            name: Device type
+          - entity: sensor.sungrow_wallbox_model_name
+            name: Model name
+          - entity: sensor.sungrow_wallbox_serial_number
+            name: Serial number
+          - entity: sensor.sungrow_wallbox_software_version
+            name: Software version
+          - entity: sensor.sungrow_wallbox_rated_voltage
+            name: Rated voltage
+          - entity: sensor.sungrow_wallbox_supported_phases
+            name: Supported phases
+        title: Wallbox
+      - type: entities
+        entities:
+          - entity: automation.sungrow_wallbox_automate_fast_updates_while_charging
+            name: Automate Fast updates while charging
+          - entity: automation.sungrow_wallbox_update_charging_status
+            name: Automate Charging status
+          - entity: automation.sungrow_wallbox_update_charger_status
+            name: Automate Charger status
+          - entity: automation.sungrow_wallbox_update_mileage_per_kwh
+            name: Automate Mileage
+          - entity: automation.sungrow_wallbox_update_output_current
+            name: Automate Output current
+          - entity: automation.sungrow_wallbox_update_output_current_input_number
+            name: Automate Output current input number
+          - entity: automation.sungrow_wallbox_update_phase_mode
+            name: Automate Phase mode
+          - entity: automation.sungrow_wallbox_update_start_charging
+            name: Automate Start charging
+          - entity: automation.sungrow_wallbox_update_stop_charging
+            name: Automate Stop charging
+          - entity: automation.sungrow_wallbox_automate_pv_surplus
+            name: Automate PV surplus
+  - title: Test
+    path: test
+    cards:
+      - type: custom:apexcharts-card
+        experimental:
+          color_threshold: true
+        all_series_config:
+          unit: Cent/kWh
+        apex_config:
+          grid:
+            show: true
+            borderColor: '#E0E0E0'
+          chart:
+            height: 250px
+          tooltip:
+            enabled: true
+            followCursor: false
+            x:
+              show: false
+            fixed:
+              enabled: true
+        header:
+          show: true
+          title: Strompreis
+          show_states: true
+          colorize_states: true
+          standard_format: false
+        graph_span: 48h
+        now:
+          show: true
+          color: 9E9E9E
+        span:
+          start: day
+        series:
+          - entity: sensor.tibber_prices
+            name: Preis
+            show:
+              in_header: before_now
+              name_in_header: false
+            color_threshold:
+              - value: 0
+                color: 4DD0E1
+              - value: 10
+                color: 26A69A
+              - value: 15
+                color: 4CAF50
+              - value: 20
+                color: 7CB342
+              - value: 25
+                color: FBC02D
+              - value: 30
+                color: EF6C00
+              - value: 40
+                color: B71C1C
+            type: line
+            curve: stepline
+            extend_to: false
+            stroke_width: 2
+            float_precision: 2
+            data_generator: >
+              const noon = new Date()
+
+              noon.setHours(0, 0, 0, 0)
+
+              const prices =
+              entity.attributes.today.concat(entity.attributes.tomorrow);
+
+              const data = [];
+
+              for(let i = 0; i < prices.length; i++) {
+                data.push([noon.getTime() + i * 1000 * 3600, prices[i].total * 100])
+              }
+
+              return data;
+      - type: custom:apexcharts-card
+        apex_config:
+          grid:
+            show: true
+            borderColor: '#E0E0E0'
+          chart:
+            height: 250px
+          tooltip:
+            enabled: true
+            followCursor: false
+            x:
+              show: false
+            fixed:
+              enabled: true
+        header:
+          show: true
+          title: Power distribution
+        graph_span: 24h
+        update_interval: 300s
+        now:
+          show: true
+          color: 9E9E9E
+        span:
+          start: day
+        series:
+          - entity: sensor.sungrow_inverter_load_power
+            name: Last
+            color: '#FF5733'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+          - entity: sensor.sungrow_inverter_total_dc_power
+            name: PV-Leistung
+            color: '#33FF57'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+          - entity: sensor.sungrow_inverter_export_power
+            name: Export
+            color: '#3357FF'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+          - entity: sensor.sungrow_inverter_import_power
+            name: Import
+            color: '#FF33A1'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+          - entity: sensor.sungrow_inverter_battery_charge_power
+            name: Ladung
+            color: '#FFA500'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+          - entity: sensor.sungrow_inverter_battery_discharge_power
+            name: Entladung
+            color: '#800080'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+title: Sungrow

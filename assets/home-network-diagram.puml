@@ -1,0 +1,35 @@
+@startuml
+
+!include <office/Devices/router>
+!include <office/Devices/switch>
+!include <office/Devices/workstation>
+!include <office/Servers/application_server_blue>
+!include <office/Servers/mainframe>
+
+nwdiag {
+  internet [shape = cloud ];
+  
+  
+  router [ address = "1.2.3.4" description = "<$router>\nRouter" ];
+  
+  internet -- router;
+  
+  network network {
+    address = "192.168.x.x/24";
+    router [ address = "192.168.0.1" ];
+    pc [ address = "192.168.0.2" description = "<$workstation>\nComputer" ];
+    inverter [ address = "192.168.0.3\nModbus TCP\nLAN port" description = "<$mainframe>\nInverter" ];
+    ha [ address = "192.168.0.4\nLAN port" description = "<$application_server_blue>\nHome\nAssistant" ];
+  }
+  inverter -- mppt1;
+  inverter -- mppt2;
+  inverter -- battery;
+  inverter [ address = "COM port" description = "Inverter" ]
+  battery [ address = "CAN" description = "Battery" ];
+  ha -- wallbox;
+  ha [ address = "RS485\nDongle" ]
+  wallbox [ address = "Modbus\nRS485" description = "Wallbox" ];
+  
+}
+
+@enduml
