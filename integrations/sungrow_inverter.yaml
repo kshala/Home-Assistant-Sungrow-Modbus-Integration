@@ -635,7 +635,7 @@ modbus:
 template:
   - binary_sensor:
       - name: Sungrow Inverter PV generating
-        availability: "{{ not is_state('sensor.sungrow_inverter_power_flow_status', 'unavailable') }}"
+        availability: "{{ has_value('sensor.sungrow_inverter_power_flow_status') }}"
         state: "{{ states('sensor.sungrow_inverter_power_flow_status')|int(default=0)|bitwise_and(0x1) > 0 }}"
         icon: >
           {% if is_state("binary_sensor.sungrow_inverter_pv_generating", "on") %}
@@ -645,7 +645,7 @@ template:
           {% endif %}
 
       - name: Sungrow Inverter Battery charging
-        availability: "{{ not is_state('sensor.sungrow_inverter_power_flow_status', 'unavailable') }}"
+        availability: "{{ has_value('sensor.sungrow_inverter_power_flow_status') }}"
         state: "{{ states('sensor.sungrow_inverter_power_flow_status')|int(default=0)|bitwise_and(0x2) > 0 }}"
         icon: >
           {% if is_state("binary_sensor.sungrow_inverter_battery_charging", "on") %}
@@ -655,7 +655,7 @@ template:
           {% endif %}
 
       - name: Sungrow Inverter Battery discharging
-        availability: "{{ not is_state('sensor.sungrow_inverter_power_flow_status', 'unavailable') }}"
+        availability: "{{ has_value('sensor.sungrow_inverter_power_flow_status') }}"
         state: "{{ states('sensor.sungrow_inverter_power_flow_status')|int(default=0)|bitwise_and(0x4) > 0 }}"
         icon: >
           {% if is_state("binary_sensor.sungrow_inverter_battery_discharging", "on") %}
@@ -665,7 +665,7 @@ template:
           {% endif %}
 
       - name: Sungrow Inverter Exporting power
-        availability: "{{ not is_state('sensor.sungrow_inverter_power_flow_status', 'unavailable') }}"
+        availability: "{{ has_value('sensor.sungrow_inverter_power_flow_status') }}"
         state: "{{ states('sensor.sungrow_inverter_power_flow_status')|int(default=0)|bitwise_and(0x10) > 0 }}"
         icon: >
           {% if is_state("binary_sensor.sungrow_inverter_exporting_power", "on") %}
@@ -675,7 +675,7 @@ template:
           {% endif %}
 
       - name: Sungrow Inverter Importing power
-        availability: "{{ not is_state('sensor.sungrow_inverter_power_flow_status', 'unavailable') }}"
+        availability: "{{ has_value('sensor.sungrow_inverter_power_flow_status') }}"
         state: "{{ states('sensor.sungrow_inverter_power_flow_status')|int(default=0)|bitwise_and(0x20) > 0 }}"
         icon: >
           {% if is_state("binary_sensor.sungrow_inverter_importing_power", "on") %}
@@ -687,296 +687,128 @@ template:
   - sensor:
       - name: Sungrow Inverter MPPT1 power
         <<: [*power, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_mppt1_voltage', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_mppt1_current', 'unavailable')
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_mppt1_voltage') and has_value('sensor.sungrow_inverter_mppt1_current') }}"
         state: "{{ (states('sensor.sungrow_inverter_mppt1_voltage') | float * states('sensor.sungrow_inverter_mppt1_current') | float) |int }}"
 
       - name: Sungrow Inverter MPPT2 power
         <<: [*power, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_mppt2_voltage', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_mppt2_current', 'unavailable' )
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_mppt2_voltage') and has_value('sensor.sungrow_inverter_mppt2_current') }}"
         state: "{{ (states('sensor.sungrow_inverter_mppt2_voltage') | float * states('sensor.sungrow_inverter_mppt2_current') | float) |int }}"
 
       - name: Sungrow Inverter Phase A power
         <<: [*power, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_phase_a_voltage', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_phase_a_current', 'unavailable')
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_phase_a_voltage') and has_value('sensor.sungrow_inverter_phase_a_current') }}"
         state: "{{ (states('sensor.sungrow_inverter_phase_a_voltage') | float * states('sensor.sungrow_inverter_phase_a_current') | float) |int }}"
 
       - name: Sungrow Inverter Phase B power
         <<: [*power, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_phase_b_voltage', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_phase_b_current', 'unavailable')
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_phase_b_voltage') and has_value('sensor.sungrow_inverter_phase_b_current') }}"
         state: "{{ (states('sensor.sungrow_inverter_phase_b_voltage') | float * states('sensor.sungrow_inverter_phase_b_current') | float) |int }}"
 
       - name: Sungrow Inverter Phase C power
         <<: [*power, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_phase_c_voltage', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_phase_c_current', 'unavailable')
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_phase_c_voltage') and has_value('sensor.sungrow_inverter_phase_c_current') }}"
         state: "{{ (states('sensor.sungrow_inverter_phase_c_voltage') | float * states('sensor.sungrow_inverter_phase_c_current') | float) |int }}"
 
       - name: Sungrow Inverter Meter active power
         <<: [*power, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_meter_active_power_raw', 'unavailable')
-          and states('sensor.sungrow_inverter_meter_active_power_raw')|int != 0x7FFFFFFF
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_meter_active_power_raw') and states('sensor.sungrow_inverter_meter_active_power_raw')|int != 0x7FFFFFFF }}"
         state: "{{ states('sensor.sungrow_inverter_meter_active_power_raw') }}"
 
       - name: Sungrow Inverter Meter Phase A active power
         <<: [*power, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_meter_phase_a_active_power_raw', 'unavailable')
-          and states('sensor.sungrow_inverter_meter_phase_a_active_power_raw')|int != 0x7FFFFFFF
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_meter_phase_a_active_power_raw') and states('sensor.sungrow_inverter_meter_phase_a_active_power_raw')|int != 0x7FFFFFFF }}"
         state: "{{ states('sensor.sungrow_inverter_meter_phase_a_active_power_raw') }}"
 
       - name: Sungrow Inverter Meter Phase B active power
         <<: [*power, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_meter_phase_b_active_power_raw', 'unavailable')
-          and states('sensor.sungrow_inverter_meter_phase_b_active_power_raw')|int != 0x7FFFFFFF
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_meter_phase_b_active_power_raw') and states('sensor.sungrow_inverter_meter_phase_b_active_power_raw')|int != 0x7FFFFFFF }}"
         state: "{{ states('sensor.sungrow_inverter_meter_phase_b_active_power_raw') }}"
 
       - name: Sungrow Inverter Meter Phase C active power
         <<: [*power, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_meter_phase_c_active_power_raw', 'unavailable')
-          and states('sensor.sungrow_inverter_meter_phase_c_active_power_raw')|int != 0x7FFFFFFF
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_meter_phase_c_active_power_raw') and states('sensor.sungrow_inverter_meter_phase_c_active_power_raw')|int != 0x7FFFFFFF }}"
         state: "{{ states('sensor.sungrow_inverter_meter_phase_c_active_power_raw') }}"
 
       - name: Sungrow Inverter state
         device_class: enum
-        availability: "{{ not is_state('sensor.sungrow_inverter_system_state', 'unavailable') }}"
+        availability: "{{ has_value('sensor.sungrow_inverter_system_state') }}"
         state: >-
+          {% set state_mapping = {
+              0x1500: 'Emergency Stop', 0x0004: 'Emergency Stop', 0x0001: 'Stop', 0x8000: 'Stop',
+              0x0002: 'Shutdown', 0x1300: 'Shutdown', 0x0008: 'Standby', 0x1400: 'Standby',
+              0x0010: 'Initial Standby', 0x1200: 'Initial Standby', 0x0020: 'Startup', 0x1600: 'Startup',
+              0x0000: 'Running', 0x0040: 'Running', 0x0100: 'Fault', 0x5500: 'Fault',
+              0x0400: 'Maintain mode', 0x0800: 'Forced mode', 0x1000: 'Off-grid mode',
+              0x0041: 'Off-grid charge', 0x2501: 'Restarting', 0x4000: 'External EMS mode',
+              0x0200: 'Update failed', 0x1111: 'Uninitialized', 0x1700: 'AFCI self-test shutdown',
+              0x1800: 'Intelligent Station Building Status', 0x1900: 'Safe Mode', 0x2000: 'Open loop',
+              0x4001: 'Emergency Charging Operation', 0x8100: 'Derating Running', 0x8200: 'Dispatch Running',
+              0x9100: 'Warn Run'
+          } %}
           {% set state_value = states('sensor.sungrow_inverter_system_state') | int(default=0) %}
-          {% if state_value in [0x1500,0x0004] %}
-            Emergency Stop
-          {% elif state_value in [0x0001,0x8000] %}
-            Stop
-          {% elif state_value in [0x0002,0x1300] %}
-            Shutdown
-          {% elif state_value in [0x0008,0x1400] %}
-            Standby
-          {% elif state_value in [0x0010,0x1200] %}
-            Initial Standby
-          {% elif state_value in [0x0020,0x1600] %}
-            Startup
-          {% elif state_value in [0x0000,0x0040] %}
-            Running
-          {% elif state_value in [0x0100,0x55000] %}
-            Fault
-          {% elif state_value == 0x0400 %}
-            Maintain mode
-          {% elif state_value == 0x0800 %}
-            Forced mode
-          {% elif state_value == 0x1000 %}
-            Off-grid mode
-          {% elif state_value == 0x0041 %}
-            Off-grid charge
-          {% elif state_value == 0x2501 %}
-            Restarting
-          {% elif state_value == 0x4000 %}
-            External EMS mode
-          {% elif state_value == 0x0200 %}
-            Update failed
-          {% elif state_value == 0x1111 %}
-            Uninitialized
-          {% elif state_value == 0x1700 %}
-            AFCI self-test shutdown
-          {% elif state_value == 0x1800 %}
-            Intelligent Station Building Status
-          {% elif state_value == 0x1900 %}
-            Safe Mode
-          {% elif state_value == 0x2000 %}
-            Open loop
-          {% elif state_value == 0x4001 %}
-            Emergency Charging Operation
-          {% elif state_value == 0x8100 %}
-            Derating Running
-          {% elif state_value == 0x8200 %}
-            Dispatch Running
-          {% elif state_value == 0x9100 %}
-            Warn Run
-          {% else %}
-            Unknown - should not see me!
-          {% endif %}
+          {{ state_mapping.get(state_value, 'Unknown - should not see me!') }}
 
       - name: Sungrow Inverter Device type
-        availability: "{{ not is_state('sensor.sungrow_inverter_device_type_code', 'unavailable') }}"
+        availability: "{{ has_value('sensor.sungrow_inverter_device_type_code') }}"
         device_class: enum
         state: >-
+          {% set device_mapping = {
+              0x0D06: 'SH3K6', 0x0D07: 'SH4K6', 0x0D09: 'SH5K-20', 0x0D03: 'SH5K-V13',
+              0x0D0A: 'SH3K6-30', 0x0D0B: 'SH4K6-30', 0x0D0C: 'SH5K-30', 0x0D17: 'SH3.RS',
+              0x0D0D: 'SH3.6RS', 0x0D18: 'SH4.0RS', 0x0D0F: 'SH5.0RS', 0x0D10: 'SH6.0RS',
+              0x0D1A: 'SH8.0RS', 0x0D1B: 'SH10RS', 0x0E00: 'SH5.0RT', 0x0E01: 'SH6.0RT',
+              0x0E02: 'SH8.0RT', 0x0E03: 'SH10RT', 0x0E10: 'SH5.0RT-20', 0x0E11: 'SH6.0RT-20',
+              0x0E12: 'SH8.0RT-20', 0x0E13: 'SH10RT-20', 0x0E0C: 'SH5.0RT-V112', 0x0E0D: 'SH6.0RT-V112',
+              0x0E0E: 'SH8.0RT-V112', 0x0E0F: 'SH10RT-V112', 0x0E08: 'SH5.0RT-V122', 0x0E09: 'SH6.0RT-V122',
+              0x0E0A: 'SH8.0RT-V122', 0x0E0B: 'SH10RT-V122', 0x0D0E: 'SH4.6RS'
+          } %}
           {% set device_type_code = states('sensor.sungrow_inverter_device_type_code') | int(default=0) %}
-          {% if device_type_code  == 0x0D06 %}
-            SH3K6
-          {% elif device_type_code == 0x0D07 %}
-            SH4K6
-          {% elif device_type_code == 0x0D09 %}
-            SH5K-20
-          {% elif device_type_code == 0x0D03 %}
-            SH5K-V13
-          {% elif device_type_code == 0x0D0A %}
-            SH3K6-30
-          {% elif device_type_code == 0x0D0B %}
-            SH4K6-30
-          {% elif device_type_code == 0x0D0C %}
-            SH5K-30
-          {% elif device_type_code == 0x0D17 %}
-            SH3.RS
-          {% elif device_type_code == 0x0D0D %}
-            SH3.6RS
-          {% elif device_type_code == 0x0D18 %}
-            SH4.0RS
-          {% elif device_type_code == 0x0D0F %}
-            SH5.0RS
-          {% elif device_type_code == 0x0D10 %}
-            SH6.0RS
-          {% elif device_type_code == 0x0D1A %}
-            SH8.0RS
-          {% elif device_type_code == 0x0D1B %}
-            SH10RS
-          {% elif device_type_code == 0x0E00 %}
-            SH5.0RT
-          {% elif device_type_code == 0x0E01 %}
-            SH6.0RT
-          {% elif device_type_code == 0x0E02 %}
-            SH8.0RT
-          {% elif device_type_code == 0x0E03 %}
-            SH10RT
-          {% elif device_type_code == 0x0E10 %}
-            SH5.0RT-20
-          {% elif device_type_code == 0x0E11 %}
-            SH6.0RT-20
-          {% elif device_type_code == 0x0E12 %}
-            SH8.0RT-20
-          {% elif device_type_code == 0x0E13 %}
-            SH10RT-20
-          {% elif device_type_code == 0x0E0C %}
-            SH5.0RT-V112
-          {% elif device_type_code == 0x0E0D %}
-            SH6.0RT-V112
-          {% elif device_type_code == 0x0E0E %}
-            SH8.0RT-V112
-          {% elif device_type_code == 0x0E0F %}
-            SH10RT-V112
-          {% elif device_type_code == 0x0E08 %}
-            SH5.0RT-V122
-          {% elif device_type_code == 0x0E09 %}
-            SH6.0RT-V122
-          {% elif device_type_code == 0x0E0A %}
-            SH8.0RT-V122
-          {% elif device_type_code == 0x0E0B %}
-            SH10RT-V122
-          {% elif device_type_code == 0x0D0E %}
-            SH4.6RS
-          {% else %}
-            Unknown device code!
-          {% endif %}
+          {{ device_mapping.get(device_type_code, 'Unknown device code!') }}
 
       - name: Sungrow Inverter Battery forced charge/discharge mode
-        availability: "{{ not is_state('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw', 'unavailable') }}"
+        availability: "{{ has_value('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw') }}"
         device_class: enum
         state: >-
-          {% if ((states('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw') | int(default=0)) == 0x00AA) %}
-            Forced charge
-          {% elif ((states('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw') | int(default=0))  == 0x00BB) %}
-            Forced discharge
-          {% elif ((states('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw') | int(default=0))  == 0x00CC) %}
-            Stop (default)
-          {% else %}
-            Unknown - should not see me!
-          {% endif %}
+          {% set mode_mapping = { 0x00AA: 'Forced charge', 0x00BB: 'Forced discharge', 0x00CC: 'Stop (default)'} %}
+          {% set mode_code = states('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw') | int(default=0) %}
+          {{ mode_mapping.get(mode_code, 'Unknown - should not see me!') }}
 
       - name: Sungrow Inverter Export power limit mode
-        availability: "{{ not is_state('sensor.sungrow_inverter_export_power_limit_mode_raw', 'unavailable') }}"
+        availability: "{{ has_value('sensor.sungrow_inverter_export_power_limit_mode_raw') }}"
         device_class: enum
         state: >-
-          {% if ((states('sensor.sungrow_inverter_export_power_limit_mode_raw') | int(default=0)) == 0x00AA) %}
-            Enabled
-          {% elif ((states('sensor.sungrow_inverter_export_power_limit_mode_raw') | int(default=0))  == 0x0055) %}
-            Disabled
-          {% else %}
-            Unknown - should not see me!
-          {% endif %}
+          {% set mode_mapping = {0x00AA: 'Enabled', 0x0055: 'Disabled'} %}
+          {% set mode_code = states('sensor.sungrow_inverter_export_power_limit_mode_raw') | int(default=0) %}
+          {{ mode_mapping.get(mode_code, 'Unknown - should not see me!') }}
 
       - name: Sungrow Inverter EMS mode
-        availability: "{{ not is_state('sensor.sungrow_inverter_ems_mode_raw', 'unavailable') }}"
+        availability: "{{ has_value('sensor.sungrow_inverter_ems_mode_raw') }}"
         device_class: enum
         state: >-
-          {% if ((states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0)) == 0) %}
-            Self-consumption mode (default)
-          {% elif ((states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0)) == 2) %}
-            Forced mode
-          {% elif ((states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0)) == 3) %}
-            External EMS mode
-          {% elif ((states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0)) == 4) %}
-            VPP
-          {% elif ((states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0)) == 8) %}
-            MicroGrid
-          {% else %}
-            Unknown - should not see me!
-          {% endif %}
+          {% set mode_mapping = {0: 'Self-consumption mode (default)', 2: 'Forced mode', 3: 'External EMS mode', 4: 'VPP', 8: 'MicroGrid'} %}
+          {% set mode_code = states('sensor.sungrow_inverter_ems_mode_raw') | int(default=0) %}
+          {{ mode_mapping.get(mode_code, 'Unknown - should not see me!') }}
 
       - name: Sungrow Inverter Battery charge power
         <<: [*power, *measurement]
-        availability: "{{ not is_state('sensor.sungrow_inverter_battery_power', 'unavailable') }}"
-        state: >-
-          {% if states('sensor.sungrow_inverter_battery_power')|int < 0 %}
-            {{ states('sensor.sungrow_inverter_battery_power')|int *-1 }}
-          {% else %}
-            0
-          {% endif %}
+        availability: "{{ has_value('sensor.sungrow_inverter_battery_power') }}"
+        state: "{{ min(states('sensor.sungrow_inverter_battery_power') | int, 0) * -1 }}"
 
       - name: Sungrow Inverter Battery discharge power
         <<: [*power, *measurement]
-        availability: "{{ not is_state('sensor.sungrow_inverter_battery_power', 'unavailable') }}"
-        state: >-
-          {% if states('sensor.sungrow_inverter_battery_power')|int > 0 %}
-            {{ states('sensor.sungrow_inverter_battery_power')|int }}
-          {% else %}
-            0
-          {% endif %}
+        availability: "{{ has_value('sensor.sungrow_inverter_battery_power') }}"
+        state: "{{ max(states('sensor.sungrow_inverter_battery_power') | int, 0) }}"
 
       - name: Sungrow Inverter Import power
         <<: [*power, *measurement]
-        availability: "{{ not is_state('sensor.sungrow_inverter_import_export_power', 'unavailable') }}"
-        state: >-
-          {% if states('sensor.sungrow_inverter_import_export_power')|int < 0 %}
-            {{ states('sensor.sungrow_inverter_import_export_power')|int *-1 }}
-          {% else %}
-            0
-          {% endif %}
+        availability: "{{ has_value('sensor.sungrow_inverter_import_export_power') }}"
+        state: "{{ min(states('sensor.sungrow_inverter_import_export_power') | int, 0) * -1 }}"
 
       - name: Sungrow Inverter Export power
         <<: [*power, *measurement]
-        availability: "{{ not is_state('sensor.sungrow_inverter_import_export_power', 'unavailable') }}"
-        state: >-
-          {% if states('sensor.sungrow_inverter_import_export_power')|int > 0 %}
-            {{ states('sensor.sungrow_inverter_import_export_power')|int }}
-          {% else %}
-            0
-          {% endif %}
+        availability: "{{ has_value('sensor.sungrow_inverter_import_export_power') }}"
+        state: "{{ max(states('sensor.sungrow_inverter_import_export_power') | int, 0) }}"
 
       - name: "Sungrow Inverter Monthly PV generation (current)"
         <<: [*energy, *total_increasing]
@@ -1016,47 +848,32 @@ template:
 
       - name: "Sungrow Inverter Battery level (nominal)"
         <<: [*battery, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_battery_level', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_battery_minimum_soc', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_battery_maximum_soc', 'unavailable')
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_battery_level') and has_value('sensor.sungrow_inverter_battery_minimum_soc') and has_value('sensor.sungrow_inverter_battery_maximum_soc') }}"
         state: >-
           {% set soc_current = states('sensor.sungrow_inverter_battery_level') | float %}
           {% set soc_min = states('sensor.sungrow_inverter_battery_minimum_soc') | float %}
           {% set soc_max = states('sensor.sungrow_inverter_battery_maximum_soc') | float %}
-          {{
-            ((soc_min) + ((soc_max - soc_min) * (soc_current / 100))) | round(1)
-          }}
+          {{ ((soc_min) + ((soc_max - soc_min) * (soc_current / 100))) | round(1) }}
 
       - name: "Sungrow Inverter Battery charge (nominal)"
         <<: [*energy_storage, *measurement]
-        availability: >-
-          {{
-          not is_state('sensor.sungrow_inverter_battery_capacity', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_battery_level_nominal', 'unavailable')
-          }}
-        state: >-
-          {{
-            ( states('sensor.sungrow_inverter_battery_capacity') | float *
-            states('sensor.sungrow_inverter_battery_level_nominal') | float / 100 )| round(1)
-          }}
+        availability: "{{ has_value('sensor.sungrow_inverter_battery_capacity') and has_value('sensor.sungrow_inverter_battery_level_nominal') }}"
+        state: "{{ (states('sensor.sungrow_inverter_battery_capacity') | float * states('sensor.sungrow_inverter_battery_level_nominal') | float / 100) | round(1) }}"
 
       - name: "Sungrow Inverter Battery charge"
         <<: [*energy_storage, *measurement]
         availability: >-
           {{
-          not is_state('sensor.sungrow_inverter_battery_capacity', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_battery_level', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_battery_minimum_soc', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_battery_maximum_soc', 'unavailable')
+          has_value('sensor.sungrow_inverter_battery_capacity')
+          and has_value('sensor.sungrow_inverter_battery_level')
+          and has_value('sensor.sungrow_inverter_battery_minimum_soc')
+          and has_value('sensor.sungrow_inverter_battery_maximum_soc')
           }}
         state: >-
           {{
             ( states('sensor.sungrow_inverter_battery_capacity')|float
-            * ( states('sensor.sungrow_inverter_battery_maximum_soc')|float - states('sensor.sungrow_inverter_battery_minimum_soc')|float ) /100
-            * ( states('sensor.sungrow_inverter_battery_level')|float ) /100
+            * (states('sensor.sungrow_inverter_battery_maximum_soc')|float - states('sensor.sungrow_inverter_battery_minimum_soc')|float) /100
+            * (states('sensor.sungrow_inverter_battery_level')|float) /100
             ) |round(2)
           }}
 
@@ -1064,13 +881,17 @@ template:
         <<: [*energy, *total_increasing]
         availability: >-
           {{
-          not is_state('sensor.sungrow_inverter_daily_pv_generation', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_daily_exported_energy', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_daily_imported_energy', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_daily_battery_charge', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_daily_battery_discharge', 'unavailable')
+          has_value('sensor.sungrow_inverter_daily_pv_generation')
+          and has_value('sensor.sungrow_inverter_daily_exported_energy')
+          and has_value('sensor.sungrow_inverter_daily_imported_energy')
+          and has_value('sensor.sungrow_inverter_daily_battery_charge')
+          and has_value('sensor.sungrow_inverter_daily_battery_discharge')
           }}
         state: >-
+          {% set old_value = 0 %}
+          {% if has_value('sensor.sungrow_inverter_daily_consumed_energy') %}
+            {% set old_value = states('sensor.sungrow_inverter_daily_consumed_energy')|float %}
+          {% endif %}
           {% set value =
             (
               states('sensor.sungrow_inverter_daily_pv_generation')|float
@@ -1078,23 +899,19 @@ template:
               + states('sensor.sungrow_inverter_daily_imported_energy')|float
               - states('sensor.sungrow_inverter_daily_battery_charge')|float
               + states('sensor.sungrow_inverter_daily_battery_discharge')|float
-            )|int
+            )|round(1)
           %}
-          {% if value >= 0 %}
-            {{ value }}
-          {% else %}
-            0
-          {% endif %}
+          {{ 0 if value == 0 else value if value > old_value else old_value }}
 
       - name: "Sungrow Inverter Total consumed energy"
         <<: [*energy, *total]
         availability: >-
           {{
-          not is_state('sensor.sungrow_inverter_total_pv_generation', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_total_exported_energy', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_total_imported_energy', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_total_battery_charge', 'unavailable')
-          and not is_state('sensor.sungrow_inverter_total_battery_discharge', 'unavailable')
+          has_value('sensor.sungrow_inverter_total_pv_generation')
+          and has_value('sensor.sungrow_inverter_total_exported_energy')
+          and has_value('sensor.sungrow_inverter_total_imported_energy')
+          and has_value('sensor.sungrow_inverter_total_battery_charge')
+          and has_value('sensor.sungrow_inverter_total_battery_discharge')
           }}
         state: >-
           {{
@@ -1104,7 +921,7 @@ template:
               + states('sensor.sungrow_inverter_total_imported_energy')|float
               - states('sensor.sungrow_inverter_total_battery_charge')|float
               + states('sensor.sungrow_inverter_total_battery_discharge')|float
-            )|int
+            )|round(1)
           }}
 
 input_number:
@@ -1193,9 +1010,7 @@ automation:
     alias: "Sungrow Inverter Update system state"
     triggers:
       - trigger: state
-        entity_id:
-          - input_select.sungrow_inverter_set_start_stop
-    condition: []
+        entity_id: input_select.sungrow_inverter_set_start_stop
     variables:
       start: 0xCF
       stop: 0xCE
@@ -1205,25 +1020,16 @@ automation:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
           address: 12999 # reg 13000
-          value: >
-            {% if is_state('input_select.sungrow_inverter_set_start_stop', 'Start') %}
-              {{start}}
-            {% else %}
-              {{stop}}
-            {% endif %}
+          value: "{{ start if is_state('input_select.sungrow_inverter_set_start_stop', 'Start') else stop }}"
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_system_state
-    mode: single
 
   - id: "sungrow_inverter_update_battery_maximum_soc"
     alias: "Sungrow Inverter Update Battery maximum SoC"
     triggers:
       - trigger: state
-        entity_id:
-          - input_number.sungrow_inverter_set_battery_maximum_soc
-    condition: []
+        entity_id: input_number.sungrow_inverter_set_battery_maximum_soc
     actions:
       - action: modbus.write_register
         data_template:
@@ -1232,35 +1038,29 @@ automation:
           address: 13057 # reg 13058
           value: "{{ states('input_number.sungrow_inverter_set_battery_maximum_soc') | int *10}}"
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_battery_maximum_soc
-    mode: single
 
   - id: "sungrow_inverter_update_battery_maximum_soc_input_number"
     alias: "Sungrow Inverter Update Battery maximum SoC input number"
     triggers:
       - trigger: state
-        entity_id:
-          - sensor.sungrow_inverter_battery_maximum_soc
-    condition:
+        entity_id: sensor.sungrow_inverter_battery_maximum_soc
+    conditions:
       - condition: template
-        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_maximum_soc', 'unavailable') }}"
+        value_template: "{{ has_value('sensor.sungrow_inverter_battery_maximum_soc') }}"
     actions:
       - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_maximum_soc
         data:
           value: "{{ states('sensor.sungrow_inverter_battery_maximum_soc') }}"
-    mode: single
 
   - id: "sungrow_inverter_update_battery_minimum_soc"
     alias: "Sungrow Inverter Update Battery minimum SoC"
     triggers:
       - trigger: state
-        entity_id:
-          - input_number.sungrow_inverter_set_battery_minimum_soc
-    condition: []
+        entity_id: input_number.sungrow_inverter_set_battery_minimum_soc
     actions:
       - action: modbus.write_register
         data_template:
@@ -1269,35 +1069,29 @@ automation:
           address: 13058 # reg 13059
           value: "{{ states('input_number.sungrow_inverter_set_battery_minimum_soc') | int *10}}"
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_battery_minimum_soc
-    mode: single
 
   - id: "sungrow_inverter_update_battery_minimum_soc_input_number"
     alias: "Sungrow Inverter Update Battery minimum SoC input number"
     triggers:
       - trigger: state
-        entity_id:
-          - sensor.sungrow_inverter_battery_minimum_soc
-    condition:
+        entity_id: sensor.sungrow_inverter_battery_minimum_soc
+    conditions:
       - condition: template
-        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_minimum_soc', 'unavailable') }}"
+        value_template: "{{ has_value('sensor.sungrow_inverter_battery_minimum_soc') }}"
     actions:
       - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_minimum_soc
         data:
           value: "{{ states('sensor.sungrow_inverter_battery_minimum_soc') }}"
-    mode: single
 
   - id: "sungrow_inverter_update_battery_backup_soc"
     alias: "Sungrow Inverter Update Battery backup SoC"
     triggers:
       - trigger: state
-        entity_id:
-          - input_number.sungrow_inverter_set_battery_backup_soc
-    condition: []
+        entity_id: input_number.sungrow_inverter_set_battery_backup_soc
     actions:
       - action: modbus.write_register
         data_template:
@@ -1306,35 +1100,29 @@ automation:
           address: 13099 # reg 13100
           value: "{{ states('input_number.sungrow_inverter_set_battery_backup_soc') | int}}"
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_battery_backup_soc
-    mode: single
 
   - id: "sungrow_inverter_update_battery_backup_soc_input_number"
     alias: "Sungrow Inverter Update Battery backup SoC input number"
     triggers:
       - trigger: state
-        entity_id:
-          - sensor.sungrow_inverter_battery_backup_soc
-    condition:
+        entity_id: sensor.sungrow_inverter_battery_backup_soc
+    conditions:
       - condition: template
-        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_backup_soc', 'unavailable') }}"
+        value_template: "{{ has_value('sensor.sungrow_inverter_battery_backup_soc') }}"
     actions:
       - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_backup_soc
         data:
           value: "{{ states('sensor.sungrow_inverter_battery_backup_soc') }}"
-    mode: single
 
   - id: "sungrow_inverter_update_battery_forced_charge_discharge_mode"
     alias: "Sungrow Inverter Update Battery forced charge/discharge mode"
     triggers:
       - trigger: state
-        entity_id:
-          - input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode
-    condition: []
+        entity_id: input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode
     variables:
       stop_default: 0x00CC
       forced_charge: 0x00AA
@@ -1356,35 +1144,29 @@ automation:
               {{stop_default}}
             {% endif %}
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw
-    mode: single
 
   - id: "sungrow_inverter_update_battery_forced_charge_discharge_mode_input_select"
     alias: "Sungrow Inverter Update Battery forced charge/discharge mode input select"
     triggers:
       - trigger: state
-        entity_id:
-          - sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw
-    condition:
+        entity_id: sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw
+    conditions:
       - condition: template
-        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw', 'unavailable') }}"
+        value_template: "{{ has_value('sensor.sungrow_inverter_battery_forced_charge_discharge_mode_raw') }}"
     actions:
       - action: input_select.select_option
         target:
           entity_id: input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode
         data:
           option: "{{ states('sensor.sungrow_inverter_battery_forced_charge_discharge_mode') }}"
-    mode: single
 
   - id: "sungrow_inverter_update_ems_mode"
     alias: "Sungrow Inverter Update EMS mode"
     triggers:
       - trigger: state
-        entity_id:
-          - input_select.sungrow_inverter_set_ems_mode
-    condition: []
+        entity_id: input_select.sungrow_inverter_set_ems_mode
     variables:
       self_consumtion_mode: 0
       forced_mode: 2
@@ -1412,35 +1194,29 @@ automation:
               {{self_consumtion_mode}}
             {% endif %}
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_ems_mode_raw
-    mode: single
 
   - id: "sungrow_inverter_update_ems_mode_input_select"
     alias: "Sungrow Inverter Update EMS mode input select"
     triggers:
       - trigger: state
-        entity_id:
-          - sensor.sungrow_inverter_ems_mode_raw
-    condition:
+        entity_id: sensor.sungrow_inverter_ems_mode_raw
+    conditions:
       - condition: template
-        value_template: "{{ not is_state('sensor.sungrow_inverter_ems_mode_raw', 'unavailable') }}"
+        value_template: "{{ has_value('sensor.sungrow_inverter_ems_mode_raw') }}"
     actions:
       - action: input_select.select_option
         target:
           entity_id: input_select.sungrow_inverter_set_ems_mode
         data:
           option: "{{ states('sensor.sungrow_inverter_ems_mode') }}"
-    mode: single
 
   - id: "sungrow_inverter_update_export_power_limit_mode"
     alias: "Sungrow Inverter Update Export power limit mode"
     triggers:
       - trigger: state
-        entity_id:
-          - input_select.sungrow_inverter_set_export_power_limit_mode
-    condition: []
+        entity_id: input_select.sungrow_inverter_set_export_power_limit_mode
     variables:
       export_limit_enable: 0xAA
       export_limit_disable: 0x55
@@ -1450,44 +1226,31 @@ automation:
           hub: SungrowInverter
           slave: !secret sungrow_modbus_slave
           address: 13086 # reg 13087
-          value: >
-            {% if is_state('input_select.sungrow_inverter_set_export_power_limit_mode', "Enabled") %}
-              {{export_limit_enable}}
-            {% elif is_state('input_select.sungrow_inverter_set_export_power_limit_mode', "Disabled") %}
-              {{export_limit_disable}}
-            {% else %}
-              {{export_limit_disable}}
-            {% endif %}
+          value: "{{ export_limit_enable if is_state('input_select.sungrow_inverter_set_export_power_limit_mode', 'Enabled') else export_limit_disable }}"
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_export_power_limit_mode_raw
-    mode: single
 
   - id: "sungrow_inverter_update_export_power_limit_mode_input_select"
     alias: "Sungrow Inverter Update Export power limit mode input select"
     triggers:
       - trigger: state
-        entity_id:
-          - sensor.sungrow_inverter_export_power_limit_mode_raw
-    condition:
+        entity_id: sensor.sungrow_inverter_export_power_limit_mode_raw
+    conditions:
       - condition: template
-        value_template: "{{ not is_state('sensor.sungrow_inverter_export_power_limit_mode_raw', 'unavailable') }}"
+        value_template: "{{ has_value('sensor.sungrow_inverter_export_power_limit_mode_raw') }}"
     actions:
       - action: input_select.select_option
         target:
           entity_id: input_select.sungrow_inverter_set_export_power_limit_mode
         data:
           option: "{{ states('sensor.sungrow_inverter_export_power_limit_mode') }}"
-    mode: single
 
   - id: "sungrow_inverter_update_export_power_limit"
     alias: "Sungrow Inverter Update Export power limit"
     triggers:
       - trigger: state
-        entity_id:
-          - input_number.sungrow_inverter_set_export_power_limit
-    condition: []
+        entity_id: input_number.sungrow_inverter_set_export_power_limit
     actions:
       - action: modbus.write_register
         data_template:
@@ -1496,35 +1259,29 @@ automation:
           address: 13073 # reg 13074
           value: "{{ states('input_number.sungrow_inverter_set_export_power_limit') }}"
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_export_power_limit
-    mode: single
 
   - id: "sungrow_inverter_update_export_power_limit_input_number"
     alias: "Sungrow Inverter Update Export power limit input number"
     triggers:
       - trigger: state
-        entity_id:
-          - sensor.sungrow_inverter_export_power_limit
-    condition:
+        entity_id: sensor.sungrow_inverter_export_power_limit
+    conditions:
       - condition: template
-        value_template: "{{ not is_state('sensor.sungrow_inverter_export_power_limit', 'unavailable') }}"
+        value_template: "{{ has_value('sensor.sungrow_inverter_export_power_limit') }}"
     actions:
       - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_export_power_limit
         data:
           value: "{{ states('sensor.sungrow_inverter_export_power_limit') }}"
-    mode: single
 
   - id: "sungrow_inverter_update_battery_forced_charge_discharge_power"
     alias: "Sungrow Inverter Update Battery forced charge/discharge power"
     triggers:
       - trigger: state
-        entity_id:
-          - input_number.sungrow_inverter_set_battery_forced_charge_discharge_power
-    condition: []
+        entity_id: input_number.sungrow_inverter_set_battery_forced_charge_discharge_power
     actions:
       - action: modbus.write_register
         data_template:
@@ -1533,35 +1290,29 @@ automation:
           address: 13051 # reg 13052
           value: "{{ states('input_number.sungrow_inverter_set_battery_forced_charge_discharge_power') | int}}"
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_battery_forced_charge_discharge_power
-    mode: single
 
   - id: "sungrow_inverter_update_battery_forced_charge_discharge_power_input_number"
     alias: "Sungrow Inverter Update Battery forced charge/discharge power input number"
     triggers:
       - trigger: state
-        entity_id:
-          - sensor.sungrow_inverter_battery_forced_charge_discharge_power
-    condition:
+        entity_id: sensor.sungrow_inverter_battery_forced_charge_discharge_power
+    conditions:
       - condition: template
-        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_forced_charge_discharge_power', 'unavailable') }}"
+        value_template: "{{ has_value('sensor.sungrow_inverter_battery_forced_charge_discharge_power') }}"
     actions:
       - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_forced_charge_discharge_power
         data:
           value: "{{ states('sensor.sungrow_inverter_battery_forced_charge_discharge_power') }}"
-    mode: single
 
   - id: "sungrow_inverter_update_battery_maximum_charge_power"
     alias: "Sungrow Inverter Update Battery maximum charge power"
     triggers:
       - trigger: state
-        entity_id:
-          - input_number.sungrow_inverter_set_battery_maximum_charge_power
-    condition: []
+        entity_id: input_number.sungrow_inverter_set_battery_maximum_charge_power
     actions:
       - action: modbus.write_register
         data_template:
@@ -1570,35 +1321,29 @@ automation:
           address: 33046 # reg 33047
           value: "{{ states('input_number.sungrow_inverter_set_battery_maximum_charge_power') |float /10 |int}}"
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_battery_maximum_charge_power
-    mode: single
 
   - id: "sungrow_inverter_update_battery_maximum_charge_power_input_number"
     alias: "Sungrow Inverter Update Battery maximum charge power input number"
     triggers:
       - trigger: state
-        entity_id:
-          - sensor.sungrow_inverter_battery_maximum_charge_power
-    condition:
+        entity_id: sensor.sungrow_inverter_battery_maximum_charge_power
+    conditions:
       - condition: template
-        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_maximum_charge_power', 'unavailable') }}"
+        value_template: "{{ has_value('sensor.sungrow_inverter_battery_maximum_charge_power') }}"
     actions:
       - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_maximum_charge_power
         data:
           value: "{{ states('sensor.sungrow_inverter_battery_maximum_charge_power') }}"
-    mode: single
 
   - id: "sungrow_inverter_update_battery_maximum_discharge_power"
     alias: "Sungrow Inverter Update Battery maximum discharge power"
     triggers:
       - trigger: state
-        entity_id:
-          - input_number.sungrow_inverter_set_battery_maximum_discharge_power
-    condition: []
+        entity_id: input_number.sungrow_inverter_set_battery_maximum_discharge_power
     actions:
       - action: modbus.write_register
         data_template:
@@ -1607,24 +1352,20 @@ automation:
           address: 33047 # reg 33048
           value: "{{ states('input_number.sungrow_inverter_set_battery_maximum_discharge_power')  |float /10 |int}}"
       - action: homeassistant.update_entity
-        data: {}
-        target:
+        data:
           entity_id: sensor.sungrow_inverter_battery_maximum_discharge_power
-    mode: single
 
   - id: "sungrow_inverter_update_battery_maximum_discharge_power_input_number"
     alias: "Sungrow Inverter Update Battery maximum discharge power input number"
     triggers:
       - trigger: state
-        entity_id:
-          - sensor.sungrow_inverter_battery_maximum_discharge_power
-    condition:
+        entity_id: sensor.sungrow_inverter_battery_maximum_discharge_power
+    conditions:
       - condition: template
-        value_template: "{{ not is_state('sensor.sungrow_inverter_battery_maximum_discharge_power', 'unavailable')}}"
+        value_template: "{{ has_value('sensor.sungrow_inverter_battery_maximum_discharge_power')}}"
     actions:
       - action: input_number.set_value
         target:
           entity_id: input_number.sungrow_inverter_set_battery_maximum_discharge_power
         data:
           value: "{{ states('sensor.sungrow_inverter_battery_maximum_discharge_power') }}"
-    mode: single

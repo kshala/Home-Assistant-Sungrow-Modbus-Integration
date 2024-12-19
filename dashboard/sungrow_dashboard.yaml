@@ -65,23 +65,77 @@ views:
         title: Status
         columns: 3
         state_color: true
-      - chart_type: line
-        period: 5minute
-        days_to_show: 1
-        type: statistics-graph
-        entities:
-          - sensor.sungrow_inverter_total_dc_power
-          - sensor.sungrow_inverter_load_power
-          - sensor.sungrow_inverter_export_power
-          - sensor.sungrow_inverter_import_power
-          - sensor.sungrow_inverter_battery_charge_power
-          - sensor.sungrow_inverter_battery_discharge_power
-          - sensor.sungrow_wallbox_charging_power
-        stat_types:
-          - mean
-        title: Power distribution last 24 hours
-        hide_legend: true
-        logarithmic_scale: false
+      - type: custom:apexcharts-card
+        experimental:
+          color_threshold: true
+        all_series_config:
+          unit: Cent/kWh
+        apex_config:
+          grid:
+            show: true
+            borderColor: '#E0E0E0'
+          chart:
+            height: 250px
+          tooltip:
+            enabled: true
+            followCursor: false
+            x:
+              show: false
+            fixed:
+              enabled: true
+        header:
+          show: true
+          title: Strompreis
+          show_states: true
+          colorize_states: true
+          standard_format: false
+        graph_span: 48h
+        now:
+          show: true
+          color: 9E9E9E
+        span:
+          start: day
+        series:
+          - entity: sensor.tibber_prices
+            name: Preis
+            show:
+              in_header: before_now
+              name_in_header: false
+            color_threshold:
+              - value: 0
+                color: 4DD0E1
+              - value: 10
+                color: 26A69A
+              - value: 15
+                color: 4CAF50
+              - value: 20
+                color: 7CB342
+              - value: 25
+                color: FBC02D
+              - value: 30
+                color: EF6C00
+              - value: 40
+                color: B71C1C
+            type: line
+            curve: stepline
+            extend_to: false
+            stroke_width: 2
+            float_precision: 2
+            data_generator: >
+              const noon = new Date()
+
+              noon.setHours(0, 0, 0, 0)
+
+              const prices =
+              entity.attributes.today.concat(entity.attributes.tomorrow);
+
+              const data = [];
+
+              for(let i = 0; i < prices.length; i++) {
+                data.push([noon.getTime() + i * 1000 * 3600, prices[i].total * 100])
+              }
+
+              return data;
       - type: entities
         entities:
           - entity: sensor.sungrow_inverter_battery_level
@@ -97,6 +151,85 @@ views:
           - entity: sensor.sungrow_inverter_daily_battery_discharge
             name: Daily battery discharge
         title: Battery
+      - type: custom:apexcharts-card
+        apex_config:
+          grid:
+            show: true
+            borderColor: '#E0E0E0'
+          chart:
+            height: 250px
+          tooltip:
+            enabled: true
+            followCursor: false
+            x:
+              show: false
+            fixed:
+              enabled: true
+        header:
+          show: true
+          title: Power distribution
+        graph_span: 24h
+        update_interval: 300s
+        now:
+          show: true
+          color: 9E9E9E
+        span:
+          start: day
+        series:
+          - entity: sensor.sungrow_inverter_load_power
+            name: Last
+            color: '#FF5733'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+          - entity: sensor.sungrow_inverter_total_dc_power
+            name: PV-Leistung
+            color: '#33FF57'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+          - entity: sensor.sungrow_inverter_export_power
+            name: Export
+            color: '#3357FF'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+          - entity: sensor.sungrow_inverter_import_power
+            name: Import
+            color: '#FF33A1'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+          - entity: sensor.sungrow_inverter_battery_charge_power
+            name: Ladung
+            color: '#FFA500'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
+          - entity: sensor.sungrow_inverter_battery_discharge_power
+            name: Entladung
+            color: '#800080'
+            type: line
+            stroke_width: 1
+            extend_to: false
+            group_by:
+              func: avg
+              duration: 5min
       - type: custom:power-flow-card-plus
         entities:
           battery:
@@ -227,6 +360,14 @@ views:
         title: Power flow
         max_expected_power: 10000
         max_flow_rate: 5
+      - type: history-graph
+        hours_to_show: 19
+        entities:
+          - entity: sensor.sungrow_inverter_daily_pv_generation
+          - entity: sensor.solar_forecast_energy_production_today_remaining
+          - entity: sensor.solar_forecast_energy_production_today
+          - entity: sensor.solar_forecast_energy_production_tomorrow
+        title: Forecast
   - title: Detailed Info
     icon: mdi:solar-power-variant-outline
     cards:
@@ -429,21 +570,21 @@ views:
           - entity: input_select.sungrow_inverter_set_ems_mode
             name: EMS mode
           - entity: input_number.sungrow_inverter_set_battery_minimum_soc
-            name: Battery minimum SoC
+            name: Min SoC
           - entity: input_number.sungrow_inverter_set_battery_maximum_soc
-            name: Battery maximum SoC
+            name: Max SoC
           - entity: input_number.sungrow_inverter_set_battery_backup_soc
-            name: Battery backup SoC
+            name: Backup SoC
           - entity: >-
               input_select.sungrow_inverter_set_battery_forced_charge_discharge_mode
-            name: Battery forced charge/discharge mode
+            name: Forced mode
           - entity: >-
               input_number.sungrow_inverter_set_battery_forced_charge_discharge_power
-            name: Battery Forced charge/discharge power
+            name: Forced power
           - entity: input_number.sungrow_inverter_set_battery_maximum_charge_power
-            name: Battery maximum charge power
+            name: Max charge power
           - entity: input_number.sungrow_inverter_set_battery_maximum_discharge_power
-            name: Battery maximum discharge power
+            name: Max discharge power
         title: EMS & Battery Settings
         state_color: false
         show_header_toggle: true
@@ -667,157 +808,4 @@ views:
             name: Automate Stop charging
           - entity: automation.sungrow_wallbox_automate_pv_surplus
             name: Automate PV surplus
-  - title: Test
-    path: test
-    cards:
-      - type: custom:apexcharts-card
-        experimental:
-          color_threshold: true
-        all_series_config:
-          unit: Cent/kWh
-        apex_config:
-          grid:
-            show: true
-            borderColor: '#E0E0E0'
-          chart:
-            height: 250px
-          tooltip:
-            enabled: true
-            followCursor: false
-            x:
-              show: false
-            fixed:
-              enabled: true
-        header:
-          show: true
-          title: Strompreis
-          show_states: true
-          colorize_states: true
-          standard_format: false
-        graph_span: 48h
-        now:
-          show: true
-          color: 9E9E9E
-        span:
-          start: day
-        series:
-          - entity: sensor.tibber_prices
-            name: Preis
-            show:
-              in_header: before_now
-              name_in_header: false
-            color_threshold:
-              - value: 0
-                color: 4DD0E1
-              - value: 10
-                color: 26A69A
-              - value: 15
-                color: 4CAF50
-              - value: 20
-                color: 7CB342
-              - value: 25
-                color: FBC02D
-              - value: 30
-                color: EF6C00
-              - value: 40
-                color: B71C1C
-            type: line
-            curve: stepline
-            extend_to: false
-            stroke_width: 2
-            float_precision: 2
-            data_generator: >
-              const noon = new Date()
-
-              noon.setHours(0, 0, 0, 0)
-
-              const prices =
-              entity.attributes.today.concat(entity.attributes.tomorrow);
-
-              const data = [];
-
-              for(let i = 0; i < prices.length; i++) {
-                data.push([noon.getTime() + i * 1000 * 3600, prices[i].total * 100])
-              }
-
-              return data;
-      - type: custom:apexcharts-card
-        apex_config:
-          grid:
-            show: true
-            borderColor: '#E0E0E0'
-          chart:
-            height: 250px
-          tooltip:
-            enabled: true
-            followCursor: false
-            x:
-              show: false
-            fixed:
-              enabled: true
-        header:
-          show: true
-          title: Power distribution
-        graph_span: 24h
-        update_interval: 300s
-        now:
-          show: true
-          color: 9E9E9E
-        span:
-          start: day
-        series:
-          - entity: sensor.sungrow_inverter_load_power
-            name: Last
-            color: '#FF5733'
-            type: line
-            stroke_width: 1
-            extend_to: false
-            group_by:
-              func: avg
-              duration: 5min
-          - entity: sensor.sungrow_inverter_total_dc_power
-            name: PV-Leistung
-            color: '#33FF57'
-            type: line
-            stroke_width: 1
-            extend_to: false
-            group_by:
-              func: avg
-              duration: 5min
-          - entity: sensor.sungrow_inverter_export_power
-            name: Export
-            color: '#3357FF'
-            type: line
-            stroke_width: 1
-            extend_to: false
-            group_by:
-              func: avg
-              duration: 5min
-          - entity: sensor.sungrow_inverter_import_power
-            name: Import
-            color: '#FF33A1'
-            type: line
-            stroke_width: 1
-            extend_to: false
-            group_by:
-              func: avg
-              duration: 5min
-          - entity: sensor.sungrow_inverter_battery_charge_power
-            name: Ladung
-            color: '#FFA500'
-            type: line
-            stroke_width: 1
-            extend_to: false
-            group_by:
-              func: avg
-              duration: 5min
-          - entity: sensor.sungrow_inverter_battery_discharge_power
-            name: Entladung
-            color: '#800080'
-            type: line
-            stroke_width: 1
-            extend_to: false
-            group_by:
-              func: avg
-              duration: 5min
 title: Sungrow
