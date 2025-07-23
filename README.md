@@ -52,7 +52,7 @@ This integration does some things very differently from many other integrations 
 
 The network diagram represents how Home Assistant is connected in my home network together with the inverter and the wallbox.
 
-![home network diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/kshala/Home-Assistant-Sungrow-Modbus-Integration/setup-repo/assets/home-network-diagram.puml)
+![home network diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/kshala/Home-Assistant-Sungrow-Modbus-Integration/main/assets/home-network-diagram.puml)
 
 ## 3.1. Setup Inverter
 
