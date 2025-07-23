@@ -1,54 +1,73 @@
 automation:
+  - id: "sungrow_inverter_automate_stop_battery_charging"
+    alias: "Sungrow Inverter Automate Stop Battery Charging"
+    triggers:
+      - trigger: numeric_state
+        entity_id: sensor.sungrow_inverter_battery_level_nominal
+        above: 79.9
+    actions:
+      - if:
+          - condition: template
+            value_template: "{{ (states('input_number.sungrow_inverter_set_battery_maximum_charge_power') | float) != 10.0 }}"
+        then:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.sungrow_inverter_set_battery_maximum_charge_power
+            data:
+              value: 10.0
+      - if:
+          - condition: template
+            value_template: "{{ (states('input_number.sungrow_inverter_set_export_power_limit') | float) < 10000 }}"
+        then:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.sungrow_inverter_set_export_power_limit
+            data:
+              value: 10000
+    mode: single
+
   - id: "sungrow_wallbox_automate_pv_surplus"
     alias: "Sungrow Wallbox Automate PV surplus"
     triggers:
       - trigger: state
+        entity_id: sensor.sungrow_inverter_total_dc_power
+    conditions:
+      - condition: state
         entity_id: sensor.sungrow_wallbox_charging_status
-        to: "Charging"
-      - trigger: state
+        state: "Charging"
+      - condition: state
         entity_id: input_select.sungrow_wallbox_set_charging_mode
-        to: "PV surplus"
+        state: "PV surplus"
     variables:
-      significance_threshold: 0.5
+      significance_threshold: 1
       min_current: 6.0
       max_current: 16.0
+      max_power: 10000
       phase_mode: "{{ 3 if is_state('sensor.sungrow_wallbox_phase_mode', 'Three-phase') else 1 }}"
     actions:
-      - repeat:
-          sequence:
-            - action: modbus.write_register
-              data_template:
-                hub: SungrowWallbox
-                slave: !secret wallbox_modbus_slave
-                address: 21202
-                value: >-
-                  {% set total_dc_power = states('sensor.sungrow_inverter_total_dc_power')|float %}
-                  {% set load_power = states('sensor.sungrow_inverter_load_power')|float %}
-                  {% set charging_power = states('sensor.sungrow_wallbox_charging_power')|float %}
-                  {% set rated_voltage = states('sensor.sungrow_wallbox_rated_voltage')|float %}
-                  {% set last_output_current = states('sensor.sungrow_wallbox_output_current')|float %}
-                  {% set target_power = total_dc_power - (load_power - charging_power) %}
-                  {% set target_output_current = (target_power / rated_voltage / phase_mode)|round(1) %}
-                  {% set target_output_current = [[min_current, target_output_current]|max, max_current]|min %}
-                  {% if (target_output_current - last_output_current) > significance_threshold %}
-                    {% set target_output_current = last_output_current + significance_threshold %}
-                  {% elif (last_output_current - target_output_current) > significance_threshold %}
-                    {% set target_output_current = last_output_current - significance_threshold %}
-                  {% elif now() - states.input_number.sungrow_wallbox_set_output_current.last_changed < timedelta(minutes=1) %}
-                    {% set target_output_current = last_output_current %}
-                  {% endif %}
-                  {{ target_output_current * 10|round|int }}
-            - action: homeassistant.update_entity
-              data:
-                entity_id: sensor.sungrow_wallbox_output_current
-            - delay:
-                seconds: 5
-          while:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: sensor.sungrow_wallbox_charging_status
-                  state: "Charging"
-                - condition: state
-                  entity_id: input_select.sungrow_wallbox_set_charging_mode
-                  state: "PV surplus"
+      - action: modbus.write_register
+        data_template:
+          hub: SungrowWallbox
+          slave: !secret wallbox_modbus_slave
+          address: 21202
+          value: >-
+            {% set total_dc_power = states('sensor.sungrow_inverter_total_dc_power')|float %}
+            {% set load_power = states('sensor.sungrow_inverter_load_power')|float %}
+            {% set charging_power = states('sensor.sungrow_wallbox_charging_power')|float %}
+            {% set rated_voltage = states('sensor.sungrow_wallbox_rated_voltage')|float %}
+            {% set last_output_current = states('sensor.sungrow_wallbox_output_current')|float %}
+            {% set house_power = load_power - charging_power %}
+            {% set target_power = [max_power - house_power, total_dc_power - house_power]|min %}
+            {% set target_output_current = (target_power / rated_voltage / phase_mode)|round(1) %}
+            {% set target_output_current = [[min_current, target_output_current]|max, max_current]|min %}
+            {% if (target_output_current - last_output_current) > significance_threshold %}
+              {% set target_output_current = last_output_current + significance_threshold %}
+            {% elif (last_output_current - target_output_current) > significance_threshold %}
+              {% set target_output_current = last_output_current - significance_threshold %}
+            {% elif now() - states.input_number.sungrow_wallbox_set_output_current.last_changed < timedelta(seconds=20) %}
+              {% set target_output_current = last_output_current %}
+            {% endif %}
+            {{ target_output_current * 10|round|int }}
+      - action: homeassistant.update_entity
+        data:
+          entity_id: sensor.sungrow_wallbox_output_current
