@@ -52,7 +52,33 @@ This integration does some things very differently from many other integrations 
 
 The network diagram represents how Home Assistant is connected in my home network together with the inverter and the wallbox.
 
-![home network diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.github.com/kshala/Home-Assistant-Sungrow-Modbus-Integration/main/assets/home-network-diagram.puml)
+```mermaid
+graph TD
+
+  internet[Cloud: Internet]
+  router[Router<br>1.2.3.4]
+  lanrouter[Router<br>192.168.0.1]
+  pc[Computer<br>192.168.0.2]
+  inverter[Inverter<br>192.168.0.3]
+  ha[Home Assistant<br>192.168.0.4]
+  mppt1[MPPT1]
+  mppt2[MPPT2]
+  battery[Battery]
+  wallbox[Wallbox]
+
+  internet <--> router
+  router <--> lanrouter
+  lanrouter <--> pc
+  lanrouter <--Modbus TCP<br>LAN port--> inverter
+  lanrouter <--> ha
+
+  inverter --- mppt1
+  inverter --- mppt2
+  inverter <--CAN--> battery
+
+  ha <--Modbus<br>RS485--> wallbox
+
+```
 
 ## 3.1. Setup Inverter
 
