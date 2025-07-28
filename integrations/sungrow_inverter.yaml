@@ -95,7 +95,7 @@ modbus:
 
       - name: Sungrow Inverter Daily PV generation & battery discharge
         address: 5002 # reg 5003
-        <<: [*input, *uint16, *precision_1, *energy, *total_increasing, *poll_600]
+        <<: [*input, *uint16, *precision_1, *energy, *poll_600]
 
       - name: Sungrow Inverter Total PV generation & battery discharge
         address: 5003 # reg 5004
@@ -286,67 +286,67 @@ modbus:
       # Start yearly pv generation
       - name: Sungrow Inverter Yearly PV generation (2019)
         address: 6257 # reg 6258
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly PV generation (2020)
         address: 6259 # reg 6260
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly PV generation (2021)
         address: 6261 # reg 6262
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly PV generation (2022)
         address: 6263 # reg 6264
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly PV generation (2023)
         address: 6265 # reg 6266
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly PV generation (2024)
         address: 6267 # reg 6268
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly PV generation (2025)
         address: 6269 # reg 6270
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly PV generation (2026)
         address: 6271 # reg 6272
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly PV generation (2027)
         address: 6273 # reg 6274
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly PV generation (2028)
         address: 6275 # reg 6276
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly PV generation (2029)
         address: 6277 # reg 6278
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
-      - name: Sungrow Inverter Yearly PV generation (2030)
-        address: 6279 # reg 6280
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+      # - name: Sungrow Inverter Yearly PV generation (2030)
+      #   address: 6279 # reg 6280
+      #   <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
-      - name: Sungrow Inverter Yearly PV generation (2031)
-        address: 6281 # reg 6282
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+      # - name: Sungrow Inverter Yearly PV generation (2031)
+      #   address: 6281 # reg 6282
+      #   <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
-      - name: Sungrow Inverter Yearly PV generation (2032)
-        address: 6283 # reg 6284
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+      # - name: Sungrow Inverter Yearly PV generation (2032)
+      #   address: 6283 # reg 6284
+      #   <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
-      - name: Sungrow Inverter Yearly PV generation (2033)
-        address: 6285 # reg 6286
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+      # - name: Sungrow Inverter Yearly PV generation (2033)
+      #   address: 6285 # reg 6286
+      #   <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
-      - name: Sungrow Inverter Yearly PV generation (2034)
-        address: 6287 # reg 6288
-        <<: [*input, *uint32, *energy, *total_increasing, *precision_1, *poll_600]
+      # - name: Sungrow Inverter Yearly PV generation (2034)
+      #   address: 6287 # reg 6288
+      #   <<: [*input, *uint32, *energy, *precision_1, *poll_600]
       # End yearly pv generation
 
       # Start monthly export
@@ -402,67 +402,67 @@ modbus:
       # Start yearly export energy from PV
       - name: Sungrow Inverter Yearly Export (2019)
         address: 6615 # reg 6616
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly Export (2020)
         address: 6617 # reg 6618
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly Export (2021)
         address: 6619 # reg 6620
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly Export (2022)
         address: 6621 # reg 6622
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly Export (2023)
         address: 6623 # reg 6624
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly Export (2024)
         address: 6625 # reg 6626
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly Export (2025)
         address: 6627 # reg 6628
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly Export (2026)
         address: 6629 # reg 6630
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly Export (2027)
         address: 6631 # reg 6632
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly Export (2028)
         address: 6633 # reg 6634
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Yearly Export (2029)
         address: 6635 # reg 6636
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+        <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
-      - name: Sungrow Inverter Yearly Export (2030)
-        address: 6637 # reg 6638
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+      # - name: Sungrow Inverter Yearly Export (2030)
+      #   address: 6637 # reg 6638
+      #   <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
-      - name: Sungrow Inverter Yearly Export (2031)
-        address: 6639 # reg 6640
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+      # - name: Sungrow Inverter Yearly Export (2031)
+      #   address: 6639 # reg 6640
+      #   <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
-      - name: Sungrow Inverter Yearly Export (2032)
-        address: 6641 # reg 6642
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+      # - name: Sungrow Inverter Yearly Export (2032)
+      #   address: 6641 # reg 6642
+      #   <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
-      - name: Sungrow Inverter Yearly Export (2033)
-        address: 6643 # reg 6644
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+      # - name: Sungrow Inverter Yearly Export (2033)
+      #   address: 6643 # reg 6644
+      #   <<: [*input, *uint32, *energy, *precision_1, *poll_600]
 
-      - name: Sungrow Inverter Yearly Export (2034)
-        address: 6645 # reg 6646
-        <<: [*input, *uint32, *energy, *total, *precision_1, *poll_600]
+      # - name: Sungrow Inverter Yearly Export (2034)
+      #   address: 6645 # reg 6646
+      #   <<: [*input, *uint32, *energy, *precision_1, *poll_600]
       # End yearly export energy from PV
 
       - name: Sungrow Inverter System state
@@ -475,7 +475,7 @@ modbus:
 
       - name: Sungrow Inverter Daily PV generation
         address: 13001 # reg 13002
-        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint16, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Total PV generation
         address: 13002 # reg 13003
@@ -483,7 +483,7 @@ modbus:
 
       - name: Sungrow Inverter Daily exported energy from PV
         address: 13004 # reg 13005
-        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint16, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Total exported energy from PV
         address: 13005 # reg 13006
@@ -499,7 +499,7 @@ modbus:
 
       - name: Sungrow Inverter Daily battery charge from PV
         address: 13011 # reg 13012
-        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint16, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Total battery charge from PV
         address: 13012 # reg 13013
@@ -507,7 +507,7 @@ modbus:
 
       - name: Sungrow Inverter Daily direct energy consumption
         address: 13016 # reg 13017
-        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint16, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Total direct energy consumption
         address: 13017 # reg 13018
@@ -539,7 +539,7 @@ modbus:
 
       - name: Sungrow Inverter Daily battery discharge
         address: 13025 # reg 13026
-        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint16, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Total battery discharge
         address: 13026 # reg 13027
@@ -563,7 +563,7 @@ modbus:
 
       - name: Sungrow Inverter Daily imported energy
         address: 13035 # reg 13036
-        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint16, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Total imported energy
         address: 13036 # reg 13037
@@ -571,7 +571,7 @@ modbus:
 
       - name: Sungrow Inverter Daily battery charge
         address: 13039 # reg 13040
-        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint16, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Total battery charge
         address: 13040 # reg 13041
@@ -579,7 +579,7 @@ modbus:
 
       - name: Sungrow Inverter Daily exported energy
         address: 13044 # reg 13045
-        <<: [*input, *uint16, *energy, *total_increasing, *precision_1, *poll_600]
+        <<: [*input, *uint16, *energy, *precision_1, *poll_600]
 
       - name: Sungrow Inverter Total exported energy
         address: 13045 # reg 13046
@@ -602,7 +602,7 @@ modbus:
 
       - name: Sungrow Inverter Battery forced charge/discharge power
         address: 13051 # reg 13052
-        <<: [*holding, *uint16, *poll_10, *power, *measurement]
+        <<: [*holding, *uint16, *power, *measurement, *poll_10]
 
       - name: Sungrow Inverter Battery maximum SoC
         address: 13057 # reg 13058
@@ -811,7 +811,7 @@ template:
         state: "{{ max(states('sensor.sungrow_inverter_import_export_power') | int, 0) }}"
 
       - name: "Sungrow Inverter Monthly PV generation (current)"
-        <<: [*energy, *total_increasing]
+        <<: [*energy]
         availability: >-
           {% set sensor_name = 'sungrow_inverter_monthly_pv_generation_' ~ now().timestamp() | timestamp_custom('%B') | lower %}
           {{ states('sensor.' ~ sensor_name)|is_number }}
@@ -820,7 +820,7 @@ template:
           {{ states('sensor.' ~ sensor_name) }}
 
       - name: "Sungrow Inverter Yearly PV generation (current)"
-        <<: [*energy, *total_increasing]
+        <<: [*energy]
         availability: >-
           {% set sensor_name = 'sungrow_inverter_yearly_pv_generation_' ~ now().year %}
           {{ states('sensor.' ~ sensor_name)|is_number }}
@@ -829,7 +829,7 @@ template:
           {{ states('sensor.' ~ sensor_name) }}
 
       - name: "Sungrow Inverter Monthly export (current)"
-        <<: [*energy, *total_increasing]
+        <<: [*energy]
         availability: >-
           {% set sensor_name = 'sungrow_inverter_monthly_export_' ~ now().timestamp() | timestamp_custom('%B') | lower %}
           {{ states('sensor.' ~ sensor_name)|is_number }}
@@ -838,7 +838,7 @@ template:
           {{ states('sensor.' ~ sensor_name) }}
 
       - name: "Sungrow Inverter Yearly export (current)"
-        <<: [*energy, *total_increasing]
+        <<: [*energy]
         availability: >-
           {% set sensor_name = 'sungrow_inverter_yearly_export_' ~ now().year %}
           {{ states('sensor.' ~ sensor_name)|is_number }}
@@ -874,11 +874,11 @@ template:
             ( states('sensor.sungrow_inverter_battery_capacity')|float
             * (states('sensor.sungrow_inverter_battery_maximum_soc')|float - states('sensor.sungrow_inverter_battery_minimum_soc')|float) /100
             * (states('sensor.sungrow_inverter_battery_level')|float) /100
-            ) |round(2)
+            ) |round(1)
           }}
 
       - name: "Sungrow Inverter Daily consumed energy"
-        <<: [*energy, *total_increasing]
+        <<: [*energy]
         availability: >-
           {{
           has_value('sensor.sungrow_inverter_daily_pv_generation')
@@ -890,7 +890,7 @@ template:
         state: >-
           {% set old_value = 0 %}
           {% if has_value('sensor.sungrow_inverter_daily_consumed_energy') %}
-            {% set old_value = states('sensor.sungrow_inverter_daily_consumed_energy')|float %}
+            {% set old_value = states('sensor.sungrow_inverter_daily_consumed_energy')|float|round(1) %}
           {% endif %}
           {% set value =
             (
@@ -914,7 +914,11 @@ template:
           and has_value('sensor.sungrow_inverter_total_battery_discharge')
           }}
         state: >-
-          {{
+          {% set old_value = 0 %}
+          {% if has_value('sensor.sungrow_inverter_total_consumed_energy') %}
+            {% set old_value = states('sensor.sungrow_inverter_total_consumed_energy')|float|round(1) %}
+          {% endif %}
+          {% set value =
             (
               states('sensor.sungrow_inverter_total_pv_generation')|float
               - states('sensor.sungrow_inverter_total_exported_energy')|float
@@ -922,7 +926,8 @@ template:
               - states('sensor.sungrow_inverter_total_battery_charge')|float
               + states('sensor.sungrow_inverter_total_battery_discharge')|float
             )|round(1)
-          }}
+          %}
+          {{ 0 if value == 0 else value if value > old_value else old_value }}
 
 input_number:
   sungrow_inverter_set_battery_maximum_soc:
@@ -1027,6 +1032,7 @@ automation:
 
   - id: "sungrow_inverter_update_battery_maximum_soc"
     alias: "Sungrow Inverter Update Battery maximum SoC"
+    mode: restart
     triggers:
       - trigger: state
         entity_id: input_number.sungrow_inverter_set_battery_maximum_soc
@@ -1037,9 +1043,14 @@ automation:
           slave: !secret sungrow_modbus_slave
           address: 13057 # reg 13058
           value: "{{ states('input_number.sungrow_inverter_set_battery_maximum_soc') | int *10}}"
+      - delay:
+          milliseconds: 200
       - action: homeassistant.update_entity
         data:
-          entity_id: sensor.sungrow_inverter_battery_maximum_soc
+          entity_id: 
+            - sensor.sungrow_inverter_battery_maximum_soc
+            - sensor.sungrow_inverter_battery_level
+            - sensor.sungrow_inverter_battery_charge
 
   - id: "sungrow_inverter_update_battery_maximum_soc_input_number"
     alias: "Sungrow Inverter Update Battery maximum SoC input number"
@@ -1058,6 +1069,7 @@ automation:
 
   - id: "sungrow_inverter_update_battery_minimum_soc"
     alias: "Sungrow Inverter Update Battery minimum SoC"
+    mode: restart
     triggers:
       - trigger: state
         entity_id: input_number.sungrow_inverter_set_battery_minimum_soc
@@ -1068,9 +1080,14 @@ automation:
           slave: !secret sungrow_modbus_slave
           address: 13058 # reg 13059
           value: "{{ states('input_number.sungrow_inverter_set_battery_minimum_soc') | int *10}}"
+      - delay:
+          milliseconds: 200
       - action: homeassistant.update_entity
         data:
-          entity_id: sensor.sungrow_inverter_battery_minimum_soc
+          entity_id: 
+            - sensor.sungrow_inverter_battery_minimum_soc
+            - sensor.sungrow_inverter_battery_level
+            - sensor.sungrow_inverter_battery_charge
 
   - id: "sungrow_inverter_update_battery_minimum_soc_input_number"
     alias: "Sungrow Inverter Update Battery minimum SoC input number"
